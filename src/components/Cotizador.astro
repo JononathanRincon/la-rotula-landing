@@ -1,0 +1,65 @@
+---
+import { MARCAS, ANIOS, SERVICIOS } from '../config';
+const servs = SERVICIOS.map((s) => ({ id: s.id, base: s.base, fijo: 'fijo' in s ? s.fijo : false }));
+---
+<section id="cotizar" class="bg-overol text-white" data-cotizador data-servs={JSON.stringify(servs)}>
+  <div class="wrap flex flex-wrap gap-12 py-22">
+    <div class="flex min-w-0 flex-[1_1_320px] flex-col gap-4">
+      <h2 class="h2 m-0">¿Cuánto me cuesta?</h2>
+      <p class="lead m-0 max-w-[26em] text-[#D6DBE6]">Elige tu carro y el servicio. Te damos un rango de referencia; el valor exacto sale del diagnóstico y lo apruebas antes de empezar.</p>
+    </div>
+    <div class="flex min-w-0 flex-[2_1_560px] flex-col gap-7">
+      <fieldset class="m-0 border-0 p-0">
+        <legend class="mb-3 p-0 font-semibold">Marca</legend>
+        <div class="flex flex-wrap gap-2" data-group="marca">
+          {MARCAS.map((m) => <button type="button" class="chip-dark" data-value={m} aria-pressed={m === 'Mazda' ? 'true' : 'false'}>{m}</button>)}
+        </div>
+      </fieldset>
+      <fieldset class="m-0 border-0 p-0">
+        <legend class="mb-3 p-0 font-semibold">Modelo (año)</legend>
+        <div class="flex flex-wrap gap-2" data-group="anio">
+          {ANIOS.map((a) => <button type="button" class="chip-dark" data-value={a} aria-pressed={a === '2017 a 2020' ? 'true' : 'false'}>{a}</button>)}
+        </div>
+      </fieldset>
+      <fieldset class="m-0 border-0 p-0">
+        <legend class="mb-3 p-0 font-semibold">Servicio</legend>
+        <div class="flex flex-wrap gap-2" data-group="serv">
+          {SERVICIOS.map((s) => <button type="button" class="chip-dark" data-value={s.id} aria-pressed={s.id === 'Frenos' ? 'true' : 'false'}>{s.id}</button>)}
+        </div>
+      </fieldset>
+      <div aria-live="polite" class="flex flex-wrap items-end justify-between gap-5 border-t-2 border-white/20 pt-6">
+        <div class="flex flex-col gap-1.5">
+          <span data-q-label class="text-base text-humo"></span>
+          <span data-q-range class="font-display text-[clamp(40px,5vw,60px)] leading-none font-extrabold text-placa"></span>
+          <span data-q-note class="max-w-[30em] text-[15px] leading-snug text-humo"></span>
+        </div>
+        <a href="#agendar" data-q-book class="btn-placa btn-big">Agendar este servicio</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { chipGroup, pesos } from '../scripts/lib';
+  const root = document.querySelector('[data-cotizador]') as HTMLElement;
+  const servs: { id: string; base: number; fijo: boolean }[] = JSON.parse(root.dataset.servs!);
+  const sel = { marca: 'Mazda', anio: '2017 a 2020', serv: 'Frenos' };
+  const $ = (s: string) => root.querySelector(s) as HTMLElement;
+
+  function render() {
+    const s = servs.find((x) => x.id === sel.serv)!;
+    const fMarca = ['Mazda', 'Toyota', 'Nissan', 'Volkswagen'].includes(sel.marca) ? 1.15 : sel.marca === 'Otra' ? 1.1 : 1;
+    const fAnio = ({ 'Antes de 2012': 1.12, '2012 a 2016': 1, '2017 a 2020': 1, '2021 en adelante': 1.06 } as Record<string, number>)[sel.anio] ?? 1;
+    const f = fMarca * fAnio;
+    $('[data-q-label]').textContent = `${sel.serv} para ${sel.marca === 'Otra' ? 'tu carro' : sel.marca}, ${sel.anio.toLowerCase()}`;
+    $('[data-q-range]').textContent = s.fijo ? pesos(s.base) : `${pesos(s.base * f * 0.9)} a ${pesos(s.base * f * 1.35)}`;
+    $('[data-q-note]').textContent = sel.serv === 'Diagnóstico' ? 'Gratis si agendas desde esta página y haces la reparación con nosotros.'
+      : s.fijo ? 'Precio fijo para cualquier carro particular.'
+      : 'Rango con repuestos homologados y mano de obra. Con repuestos originales de marca el valor sube.';
+  }
+  root.querySelectorAll('[data-group]').forEach((g) => chipGroup(g, (v) => { (sel as any)[(g as HTMLElement).dataset.group!] = v; render(); }));
+  $('[data-q-book]').addEventListener('click', () => {
+    document.dispatchEvent(new CustomEvent('agendar:servicio', { detail: sel.serv }));
+  });
+  render();
+</script>

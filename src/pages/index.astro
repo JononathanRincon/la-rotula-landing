@@ -1,0 +1,269 @@
+---
+import Base from '../layouts/Base.astro';
+import Recorrido from '../components/Recorrido.astro';
+import Hero from '../components/Hero.astro';
+import Cotizador from '../components/Cotizador.astro';
+import Agendador from '../components/Agendador.astro';
+import MiCarro from '../components/MiCarro.astro';
+import AntesDespues from '../components/AntesDespues.astro';
+import { TALLER, SERVICIOS, PASOS, EQUIPO, RESENAS, FAQ, ANTES_DESPUES } from '../config';
+import { pesosServer } from '../scripts/format';
+
+const schema = {
+  '@context': 'https://schema.org', '@type': 'AutoRepair', name: `${TALLER.nombre} ${TALLER.tipo}`,
+  address: { '@type': 'PostalAddress', streetAddress: TALLER.direccion, addressLocality: TALLER.ciudad, addressRegion: 'Bogotá D.C.', addressCountry: 'CO' },
+  telephone: TALLER.telefonoTel, openingHours: ['Mo-Fr 07:30-18:00', 'Sa 08:00-14:00'], priceRange: '$$',
+};
+const confianza = [
+  { big: '12 años', small: `en el mismo local de ${TALLER.barrio}` },
+  { big: '6 meses', small: 'de garantía o 10.000 km' },
+  { big: 'Fotos por WhatsApp', small: 'de cada daño antes de cotizar' },
+  { big: 'Factura electrónica', small: 'en cada servicio' },
+];
+const marcas = ['Chevrolet', 'Renault', 'Mazda', 'Kia', 'Hyundai', 'Toyota', 'Nissan', 'Suzuki', 'Volkswagen'];
+---
+<Base title={`${TALLER.tipo} en ${TALLER.barrio}, ${TALLER.ciudad} | ${TALLER.nombre}`}
+  description={`${TALLER.tipo} en ${TALLER.ciudad}: diagnóstico con escáner, frenos, aceite, suspensión y eléctrico. Te mandamos fotos por WhatsApp y solo reparamos con tu aprobación. Agenda en línea.`}
+  schema={schema}>
+  <Recorrido />
+  <main>
+    <Hero />
+
+    <section aria-label="Por qué confiar" class="bg-overol-osc text-white">
+      <div class="wrap grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-x-8 gap-y-5 py-7">
+        {confianza.map((t) => (
+          <div class="flex flex-col gap-0.5">
+            <span class="font-display text-[28px] leading-tight font-bold text-placa">{t.big}</span>
+            <span class="text-[15px] text-humo">{t.small}</span>
+          </div>
+        ))}
+      </div>
+      <div class="wrap flex flex-wrap gap-x-5.5 gap-y-2 pb-7 text-[15px] text-humo">
+        <span>Atendemos:</span>
+        {marcas.map((m) => <span class="font-medium text-white">{m}</span>)}
+      </div>
+    </section>
+
+    <section id="resenas" class="bg-white">
+      <div class="wrap pt-22 pb-18">
+        <div class="mb-9 flex flex-wrap items-end justify-between gap-4">
+          <h2 class="h2 m-0 text-overol">Lo que dicen en Google</h2>
+          {TALLER.demo && <p class="m-0 rounded bg-[#FFF4C2] px-2.5 py-1.5 text-sm text-[#6B5300]">Reseñas de ejemplo.</p>}
+        </div>
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-10">
+          {RESENAS.map((r) => (
+            <figure class="m-0 flex flex-col gap-3.5 border-t-4 border-placa pt-5">
+              <span role="img" aria-label="5 de 5 estrellas" class="text-lg tracking-[2px] text-placa-osc">★★★★★</span>
+              <blockquote class="m-0 text-[19px] leading-relaxed text-[#1E2636]">{r.texto}</blockquote>
+              <figcaption class="text-[15px] text-gris"><strong class="font-semibold text-tinta">Cliente de ejemplo</strong>, {r.carro}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <Cotizador />
+
+    <section id="servicios" class="bg-white">
+      <div class="wrap py-24">
+        <div class="mb-10 flex flex-wrap items-end justify-between gap-6">
+          <h2 class="h2 m-0 text-overol">Lo que arreglamos</h2>
+          <p class="m-0 max-w-[30em] text-[17px] leading-relaxed text-gris">Precios de referencia para carros particulares, con IVA. El valor final sale del diagnóstico y te lo mandamos antes de empezar.</p>
+        </div>
+        <ul class="m-0 flex list-none flex-col border-t-4 border-overol p-0 md:hidden">
+          {SERVICIOS.map((s) => (
+            <li class="flex flex-col gap-2 border-b border-gris-claro py-5">
+              <div class="flex items-baseline justify-between gap-3">
+                <span class="font-display text-[26px] font-bold text-overol">{s.nombre}</span>
+                <span class="font-display text-2xl font-bold whitespace-nowrap"><span class="sr-only">Desde </span>{pesosServer(s.base)}</span>
+              </div>
+              <p class="m-0 leading-snug text-[#2C3547]">{s.desc}</p>
+              <div class="flex items-center justify-between gap-3">
+                <span class="text-gris">{s.tiempo}</span>
+                <a href="#agendar" data-book={s.id} class="btn-linea min-h-11 px-4 py-2" aria-label={`Agendar ${s.nombre.toLowerCase()}`}>Agendar</a>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div class="relative hidden overflow-x-auto border-t-4 border-overol md:block">
+          <table class="w-full min-w-[760px] border-collapse text-[17px]">
+            <thead>
+              <tr class="text-left text-[15px] text-gris">
+                <th scope="col" class="py-4 pr-4 font-semibold">Servicio</th>
+                <th scope="col" class="p-4 font-semibold">Qué incluye</th>
+                <th scope="col" class="p-4 font-semibold">Tiempo</th>
+                <th scope="col" class="p-4 text-right font-semibold">Desde</th>
+                <th scope="col" class="py-4 pl-4"><span class="sr-only">Agendar</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              {SERVICIOS.map((s) => (
+                <tr class="border-t border-gris-claro">
+                  <th scope="row" class="py-5.5 pr-4 text-left font-display text-[26px] font-bold whitespace-nowrap text-overol">{s.nombre}</th>
+                  <td class="p-4 py-5.5 leading-snug text-[#2C3547]">{s.desc}</td>
+                  <td class="p-4 py-5.5 whitespace-nowrap text-gris">{s.tiempo}</td>
+                  <td class="p-4 py-5.5 text-right font-display text-2xl font-bold whitespace-nowrap">{pesosServer(s.base)}</td>
+                  <td class="py-5.5 pl-4 text-right">
+                    <a href="#agendar" data-book={s.id} class="btn-linea min-h-11 px-4 py-2" aria-label={`Agendar ${s.nombre.toLowerCase()}`}>Agendar</a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <Agendador />
+
+    <section id="como-trabajamos" class="bg-concreto">
+      <div class="wrap flex flex-wrap gap-14 py-24">
+        <div class="min-w-0 flex-[999_1_560px]">
+          <h2 class="h2 m-0 mb-8 text-overol">Así pasa tu carro por el taller</h2>
+          <picture>
+            <source srcset="/img/diagnostico.webp" type="image/webp" />
+            <img src="/img/diagnostico.jpg" alt="Mecánica conectando el escáner de diagnóstico al carro por la puerta del conductor" loading="lazy" class="mb-12 block aspect-[16/7] w-full rounded-[10px] object-cover" />
+          </picture>
+          <ol class="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-x-8 gap-y-10 p-0">
+            {PASOS.map((p, i) => (
+              <li class="flex flex-col gap-3 border-t-4 border-overol pt-5">
+                <span aria-hidden="true" class="font-display text-[56px] leading-none font-extrabold text-overol">{i + 1}</span>
+                <h3 class="m-0 font-display text-[26px] leading-tight font-bold">{p.titulo}</h3>
+                <p class="m-0 text-[17px] leading-relaxed text-[#2C3547]">{p.texto}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <figure class="m-0 flex max-w-[400px] flex-[1_1_320px] flex-col gap-3">
+          <div class="flex flex-col gap-2.5 rounded-2xl border border-[#CFC8BF] bg-[#ECE5DD] p-4.5">
+            <div class="max-w-[92%] self-start rounded-[10px] bg-white px-3 py-2.5 text-[15px] leading-snug text-[#111B21]">
+              <picture>
+                <source srcset="/img/pastillas.webp" type="image/webp" />
+                <img src="/img/pastillas.jpg" alt="Pastilla de freno gastada junto a una nueva, frente al disco" loading="lazy" class="mb-2 block h-[170px] w-full rounded-md object-cover" />
+              </picture>
+              Placa KXL 482. Las pastillas delanteras están en 2 mm y el disco izquierdo tiene canal. Recomendamos cambiar pastillas y rectificar discos.
+            </div>
+            <div class="max-w-[92%] self-start rounded-[10px] bg-white px-3 py-2.5 text-[15px] leading-normal text-[#111B21]">
+              Pastillas: $145.000<br />Rectificado de 2 discos: $70.000<br />Mano de obra: $60.000<br /><strong>Total: $275.000</strong>. Listo hoy a las 4 p.m.
+            </div>
+            <div class="self-end rounded-[10px] bg-[#D9FDD3] px-3 py-2.5 text-[15px] text-[#111B21]">Dale, háganle.</div>
+          </div>
+          <figcaption class="text-[15px] text-gris">Así se ve el reporte que te llega antes de empezar. Ejemplo con datos ficticios.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="bg-placa text-tinta">
+      <div class="wrap flex flex-wrap items-center gap-x-16 gap-y-10 py-20">
+        <div class="flex min-w-0 flex-[1_1_440px] flex-col gap-7">
+          <p class="m-0 font-display text-[clamp(36px,4.4vw,60px)] leading-[1.02] font-extrabold tracking-[-0.5px]">Te entregamos en una bolsa las piezas que cambiamos. Así ves que el cambio fue real.</p>
+          <div class="flex flex-col gap-2.5 text-lg leading-relaxed">
+            <p class="m-0">Garantía de 6 meses o 10.000 km en mano de obra y repuestos que instalamos.</p>
+            <p class="m-0">Factura electrónica en cada servicio.</p>
+          </div>
+        </div>
+        <picture class="min-w-0 flex-[1_1_420px]">
+          <source srcset="/img/entrega.webp" type="image/webp" />
+          <img src="/img/entrega.jpg" alt="Entrega del carro: el mecánico le da al cliente la llave y una bolsa con las pastillas viejas" loading="lazy" class="block aspect-[16/10] w-full rounded-[10px] border-4 border-tinta object-cover" />
+        </picture>
+      </div>
+    </section>
+
+    {ANTES_DESPUES.length > 0 && <AntesDespues pares={ANTES_DESPUES} />}
+
+    <section class="bg-white">
+      <div class="wrap py-24">
+        <h2 class="h2 m-0 mb-4 text-overol">Quién le mete la mano a tu carro</h2>
+        <p class="m-0 mb-10 max-w-[40em] text-lg leading-relaxed text-[#2C3547]">El mismo equipo desde 2014, en el mismo local de {TALLER.barrio}.</p>
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-8">
+          {EQUIPO.map((m) => (
+            <div class="flex flex-col gap-2.5">
+              <picture>
+                <source srcset={`/img/${m.img}.webp`} type="image/webp" />
+                <img src={`/img/${m.img}.jpg`} alt={m.alt} loading="lazy" class="block aspect-[4/5] w-full rounded-[10px] object-cover" />
+              </picture>
+              <span class="font-display text-2xl font-bold">{m.nombre}</span>
+              <span class="text-base leading-snug text-gris">{m.rol}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-overol text-white">
+      <div class="wrap flex flex-wrap gap-x-16 gap-y-10 py-22">
+        <div class="flex min-w-0 flex-[1_1_420px] flex-col gap-4.5">
+          <h2 class="h2 m-0">No tienes que venir. Vamos por él.</h2>
+          <p class="lead m-0 max-w-[32em] text-[#D6DBE6]">Lo recogemos en tu casa u oficina y te lo devolvemos listo. Cuesta $25.000 ida y vuelta, y es gratis en reparaciones de más de $500.000.</p>
+          <p class="m-0 text-base text-humo">Cubrimos Usaquén, Suba, Chapinero, Barrios Unidos y Engativá.</p>
+        </div>
+        <div class="flex min-w-0 flex-[1_1_320px] flex-col gap-4 border-l-4 border-placa pl-7">
+          <h3 class="m-0 font-display text-[30px] leading-tight font-bold">¿Tu carro está varado?</h3>
+          <p class="m-0 text-[17px] leading-relaxed text-[#D6DBE6]">Escríbenos con la placa y el sitio donde estás. Coordinamos grúa con un aliado de lunes a sábado.</p>
+          <a data-cta="varado" target="_blank" rel="noopener" href={`https://wa.me/${(import.meta.env.PUBLIC_WHATSAPP || '570000000000').replace(/\D/g, '')}?text=${encodeURIComponent('Hola, mi carro está varado y necesito grúa. Mi placa es: ')}`} class="btn-placa self-start">Pedir grúa por WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+    <MiCarro />
+
+    <section id="preguntas" class="bg-white">
+      <div class="mx-auto max-w-[860px] px-6 py-24">
+        <h2 class="h2 m-0 mb-8 text-overol">Lo que siempre nos preguntan</h2>
+        <div class="border-t-4 border-overol">
+          {FAQ.map((f) => (
+            <details class="border-b border-gris-claro">
+              <summary class="flex min-h-11 items-center justify-between gap-4 py-5.5 font-display text-2xl font-bold">
+                <span>{f.q}</span><span class="faq-sign text-[30px] leading-none text-overol" aria-hidden="true">+</span>
+              </summary>
+              <p class="m-0 mb-5.5 max-w-[40em] text-[17px] leading-relaxed text-[#2C3547]">{f.a}</p>
+            </details>
+          ))}
+        </div>
+        <p class="mt-7 mb-0 text-[17px]">¿Tienes otra pregunta? <a data-wa-general data-cta="faq" href="#" target="_blank" rel="noopener" class="font-semibold text-overol">Escríbenos por WhatsApp</a></p>
+      </div>
+    </section>
+
+    <section id="visitanos" class="bg-concreto">
+      <div class="wrap flex flex-wrap gap-12 py-24">
+        <div class="flex min-w-0 flex-[1_1_360px] flex-col gap-7">
+          <h2 class="h2 m-0 text-overol">Dónde estamos</h2>
+          <dl class="m-0 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-3.5 text-lg leading-snug">
+            <dt class="font-semibold text-gris">Dirección</dt><dd class="m-0">{TALLER.direccion}, {TALLER.barrio}, {TALLER.ciudad}</dd>
+            <dt class="font-semibold text-gris">Horario</dt><dd class="m-0">{TALLER.horario.semana}<br />{TALLER.horario.sabado}</dd>
+            <dt class="font-semibold text-gris">Teléfono</dt><dd class="m-0"><a href={`tel:${TALLER.telefonoTel}`} class="font-semibold text-overol">{TALLER.telefono}</a></dd>
+            <dt class="font-semibold text-gris">Pagos</dt><dd class="m-0">{TALLER.pagos}</dd>
+          </dl>
+          <div class="flex flex-wrap gap-3">
+            <a data-wa-general data-cta="ubicacion" href="#" target="_blank" rel="noopener" class="btn-overol">Pedir cita por WhatsApp</a>
+            <a href={TALLER.mapsUrl} target="_blank" rel="noopener" class="btn-linea">Cómo llegar</a>
+          </div>
+        </div>
+        <picture class="min-w-0 flex-[1_1_420px]">
+          <source srcset="/img/fachada.webp" type="image/webp" />
+          <img src="/img/fachada.jpg" alt="Frente del taller: fachada de ladrillo, persiana roja y letrero azul con letras amarillas" loading="lazy" class="block aspect-video w-full rounded-xl object-cover" />
+        </picture>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-overol text-humo">
+    <div class="wrap flex flex-wrap justify-between gap-4 py-10 text-[15px]">
+      <span><span class="font-display text-[22px] font-extrabold text-white">{TALLER.nombre}</span>&nbsp; {TALLER.tipo} en {TALLER.barrio}, {TALLER.ciudad}</span>
+      <span>NIT {TALLER.nit}, {TALLER.correo}</span>
+    </div>
+  </footer>
+
+  <div class="wa-float fixed inset-x-0 bottom-0 z-50 gap-2.5 border-t border-white/15 bg-overol px-4 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))]">
+    <a data-wa-general data-cta="flotante" href="#" target="_blank" rel="noopener" class="flex min-h-13 flex-1 items-center justify-center rounded-lg bg-placa font-display text-[22px] font-bold text-tinta no-underline">Pedir cita por WhatsApp</a>
+    <a href={`tel:${TALLER.telefonoTel}`} aria-label="Llamar al taller" class="flex min-h-13 w-13 items-center justify-center rounded-lg border-2 border-white/50 text-white">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>
+    </a>
+  </div>
+</Base>
+
+<script>
+  // Botones "Agendar" de la tabla de precios: abren el agendador con ese servicio
+  document.querySelectorAll<HTMLAnchorElement>('a[data-book]').forEach((a) =>
+    a.addEventListener('click', () => document.dispatchEvent(new CustomEvent('agendar:servicio', { detail: a.dataset.book }))));
+</script>

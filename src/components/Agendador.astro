@@ -1,0 +1,248 @@
+---
+const servicios = ['Diagnóstico', 'Frenos', 'Cambio de aceite', 'Suspensión', 'Sistema eléctrico', 'Revisión técnico-mecánica', 'No sé qué tiene'];
+const pasos = ['Servicio', 'Día', 'Hora', 'Tus datos'];
+---
+<section id="agendar" class="bg-white" data-agendador>
+  <div class="mx-auto max-w-[960px] px-6 py-24">
+    <h2 class="h2 m-0 mb-3 text-overol">Aparta día y hora</h2>
+    <p class="lead m-0 mb-9 text-[#2C3547]">Cuatro pasos y listo. Te confirmamos por WhatsApp.</p>
+
+    <ol aria-label="Pasos para agendar" class="m-0 mb-6 grid list-none grid-cols-4 gap-2 p-0" data-steps>
+      {pasos.map((p, i) => (
+        <li class="flex flex-col gap-2" data-step={i + 1}>
+          <span data-bar class="h-1.5 rounded-sm bg-gris-claro"></span>
+          <span data-txt class="text-[15px] text-[#5A6478]">{i + 1}. {p}</span>
+        </li>
+      ))}
+    </ol>
+
+    <div class="flex flex-col gap-6 rounded-xl border-2 border-overol p-5 sm:p-7">
+      <div data-summary-row hidden class="flex flex-wrap items-center justify-between gap-3 text-base text-[#2C3547]">
+        <span data-summary></span>
+        <button type="button" data-back class="btn-linea min-h-11 px-3.5 py-2 text-[15px]">Volver al paso anterior</button>
+      </div>
+
+      <fieldset data-panel="1" class="m-0 border-0 p-0">
+        <legend class="mb-4 p-0 font-display text-[28px] font-bold">¿Qué necesita tu carro?</legend>
+        <div class="flex flex-wrap gap-2.5" data-group="serv">
+          {servicios.map((s) => <button type="button" class="chip-light min-h-12 rounded-lg text-[17px]" data-value={s} aria-pressed="false">{s}</button>)}
+        </div>
+      </fieldset>
+
+      <fieldset data-panel="2" hidden class="m-0 border-0 p-0">
+        <legend class="mb-4 p-0 font-display text-[28px] font-bold">¿Qué día lo traes?</legend>
+        <div class="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-2.5" data-days></div>
+        <p class="mt-3.5 mb-0 text-[15px] text-gris">Los sábados atendemos hasta las 2:00 p.m. Los domingos no abrimos.</p>
+      </fieldset>
+
+      <fieldset data-panel="3" hidden class="m-0 border-0 p-0">
+        <legend class="mb-4 p-0 font-display text-[28px] font-bold">¿A qué hora?</legend>
+        <p data-slots-loading class="m-0 text-gris">Cargando horarios…</p>
+        <div class="grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] gap-2.5" data-slots></div>
+      </fieldset>
+
+      <form data-panel="4" hidden aria-label="Tus datos" class="flex flex-col gap-4.5" novalidate>
+        <p class="m-0 font-display text-[28px] font-bold">Tus datos</p>
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label for="b-placa" class="label">Placa</label>
+            <input id="b-placa" name="placa" class="field field-plate" maxlength="7" autocomplete="off" autocapitalize="characters" placeholder="ABC 123" required />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="b-cel" class="label">Celular con WhatsApp</label>
+            <input id="b-cel" name="cel" type="tel" inputmode="numeric" autocomplete="tel-national" class="field" placeholder="300 123 4567" required />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="b-nombre" class="label">Tu nombre (opcional)</label>
+            <input id="b-nombre" name="nombre" autocomplete="given-name" maxlength="40" class="field" />
+          </div>
+        </div>
+        <label for="b-recogida" class="flex min-h-11 cursor-pointer items-center gap-3 text-[17px]">
+          <input id="b-recogida" name="recogida" type="checkbox" class="size-5.5 accent-overol" />
+          Quiero que recojan el carro ($25.000 ida y vuelta)
+        </label>
+        <p data-error role="alert" hidden class="alert m-0"></p>
+        <button type="submit" data-submit class="btn-placa btn-big self-start">Apartar mi cita</button>
+      </form>
+
+      <div data-panel="5" hidden role="status" class="flex flex-col gap-5">
+        <p class="m-0 font-display text-[40px] leading-none font-extrabold text-overol">Cita apartada</p>
+        <dl class="m-0 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2.5 text-lg" data-done-list></dl>
+        <p class="m-0 text-[17px] leading-relaxed text-[#2C3547]">Envíanos la confirmación por WhatsApp y te respondemos con lo que debes traer.</p>
+        <div class="flex flex-wrap gap-3">
+          <a data-done-wa data-cta="agendador-whatsapp" href="#" target="_blank" rel="noopener" class="btn-placa btn-big">Confirmar por WhatsApp</a>
+          <a data-done-cal href="#" target="_blank" rel="noopener" class="btn-linea">Agregar a Google Calendar</a>
+          <button type="button" data-reset class="btn min-h-12 bg-transparent text-overol underline">Agendar otra cita</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { rpc, ApiError, chipGroup, hoyBogota, sumarDias, iso2date, fechaLarga, hora12, DCORTO, MCORTO,
+    placaLimpia, placaBonita, celularLimpio, placaValida, celularValido, waLink, track } from '../scripts/lib';
+  import { TALLER } from '../config';
+
+  const root = document.querySelector('[data-agendador]') as HTMLElement;
+  const q = <T extends Element = HTMLElement>(s: string) => root.querySelector(s) as T;
+  const SLOTS_SEMANA = ['07:30', '09:00', '10:30', '13:00', '14:30', '16:00'];
+  const SLOTS_SAB = ['08:00', '09:30', '11:00'];
+  const st = { step: 1, serv: '', day: '', slot: '' };
+  let taken = new Set<string>();
+
+  // Próximos 6 días hábiles (sin domingos), desde mañana en hora de Bogotá
+  const days: string[] = [];
+  for (let i = 1; days.length < 6 && i < 14; i++) {
+    const iso = sumarDias(hoyBogota(), i);
+    if (iso2date(iso).getUTCDay() !== 0) days.push(iso);
+  }
+  const slotsFor = (iso: string) => (iso2date(iso).getUTCDay() === 6 ? SLOTS_SAB : SLOTS_SEMANA);
+
+  async function loadTaken() {
+    try {
+      const rows = await rpc<{ day: string; slot: string }[]>('landing_taken_slots', { p_from: days[0], p_to: days[days.length - 1] });
+      taken = new Set(rows.map((r) => `${r.day} ${r.slot.slice(0, 5)}`));
+    } catch { taken = new Set(); }
+  }
+
+  function renderDays() {
+    const box = q('[data-days]');
+    box.innerHTML = '';
+    days.forEach((iso) => {
+      const d = iso2date(iso);
+      const free = slotsFor(iso).filter((s) => !taken.has(`${iso} ${s}`)).length;
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip-light min-h-22 flex-col justify-center gap-0.5 rounded-lg p-2.5 disabled:cursor-not-allowed disabled:opacity-45';
+      b.dataset.value = iso;
+      b.setAttribute('aria-pressed', String(iso === st.day));
+      b.setAttribute('aria-label', fechaLarga(iso) + (free ? '' : ', sin horarios libres'));
+      b.disabled = free === 0;
+      b.innerHTML = `<span class="text-[15px]">${DCORTO[d.getUTCDay()]}</span><span class="font-display text-[34px] leading-none font-extrabold">${d.getUTCDate()}</span><span class="text-sm">${MCORTO[d.getUTCMonth()]}</span>`;
+      box.appendChild(b);
+    });
+  }
+
+  function renderSlots() {
+    const box = q('[data-slots]');
+    box.innerHTML = '';
+    q('[data-slots-loading]').hidden = true;
+    slotsFor(st.day).forEach((s) => {
+      const busy = taken.has(`${st.day} ${s}`);
+      if (busy) {
+        const span = document.createElement('span');
+        span.className = 'flex min-h-13 flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#C9CDD3] bg-[#F2F3F5] text-[15px] text-[#5A6478]';
+        span.innerHTML = `<span class="line-through">${hora12(s)}</span><span class="text-[13px]">Ocupado</span>`;
+        box.appendChild(span);
+      } else {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'chip-light min-h-13 justify-center rounded-lg text-lg';
+        b.dataset.value = s;
+        b.setAttribute('aria-pressed', String(s === st.slot));
+        b.textContent = hora12(s);
+        box.appendChild(b);
+      }
+    });
+  }
+
+  function go(step: number) {
+    st.step = step;
+    root.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = Number(p.dataset.panel) !== step));
+    root.querySelectorAll<HTMLElement>('[data-step]').forEach((li) => {
+      const n = Number(li.dataset.step);
+      const bar = li.querySelector('[data-bar]') as HTMLElement;
+      const txt = li.querySelector('[data-txt]') as HTMLElement;
+      bar.className = 'h-1.5 rounded-sm ' + (n < step ? 'bg-overol' : n === step ? 'bg-placa' : 'bg-gris-claro');
+      txt.className = 'text-[15px] ' + (n < step ? 'font-semibold text-overol' : n === step ? 'font-bold text-tinta' : 'text-[#5A6478]');
+      n === step ? txt.setAttribute('aria-current', 'step') : txt.removeAttribute('aria-current');
+    });
+    const parts = [step > 1 ? st.serv : '', step > 2 ? fechaLarga(st.day) : '', step > 3 ? hora12(st.slot) : ''].filter(Boolean);
+    q('[data-summary-row]').hidden = !(step > 1 && step < 5);
+    q('[data-summary]').textContent = 'Elegiste: ' + parts.join(', ');
+  }
+
+  chipGroup(q('[data-group="serv"]'), (v) => { st.serv = v; renderDays(); go(2); });
+  chipGroup(q('[data-days]'), async (v) => {
+    st.day = v; st.slot = '';
+    go(3);
+    q('[data-slots]').innerHTML = '';
+    q('[data-slots-loading]').hidden = false;
+    await loadTaken();
+    renderSlots();
+  });
+  chipGroup(q('[data-slots]'), (v) => { st.slot = v; go(4); (q('#b-placa') as HTMLInputElement).focus(); });
+  q('[data-back]').addEventListener('click', () => go(Math.max(1, st.step - 1)));
+
+  const form = q<HTMLFormElement>('[data-panel="4"]');
+  const err = q('[data-error]');
+  const showErr = (m: string) => { err.textContent = m; err.hidden = false; };
+  (form.elements.namedItem('placa') as HTMLInputElement).addEventListener('input', (e) => { const t = e.target as HTMLInputElement; t.value = t.value.toUpperCase(); });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    err.hidden = true;
+    const placa = placaLimpia((form.elements.namedItem('placa') as HTMLInputElement).value);
+    const cel = celularLimpio((form.elements.namedItem('cel') as HTMLInputElement).value);
+    const nombre = (form.elements.namedItem('nombre') as HTMLInputElement).value.trim();
+    const recogida = (form.elements.namedItem('recogida') as HTMLInputElement).checked;
+    if (!placaValida(placa)) return showErr('Escribe la placa completa, por ejemplo KXL 482.');
+    if (!celularValido(cel)) return showErr('Escribe un celular de 10 dígitos que empiece por 3, por ejemplo 300 123 4567.');
+    const btn = q<HTMLButtonElement>('[data-submit]');
+    btn.disabled = true; btn.textContent = 'Apartando…';
+    try {
+      await rpc('landing_book', { p_service: st.serv, p_day: st.day, p_slot: st.slot, p_plate: placa, p_phone: cel, p_name: nombre, p_pickup: recogida });
+      track('agendador', st.serv);
+      showDone(placa, recogida, nombre);
+    } catch (ex) {
+      const a = ex as ApiError;
+      showErr(a.message);
+      if (a.code === 'slot_taken') { await loadTaken(); renderSlots(); setTimeout(() => go(3), 1500); }
+    } finally {
+      btn.disabled = false; btn.textContent = 'Apartar mi cita';
+    }
+  });
+
+  function showDone(placa: string, recogida: boolean, nombre: string) {
+    const pb = placaBonita(placa);
+    const rows: [string, string][] = [['Servicio', st.serv], ['Día', fechaLarga(st.day)], ['Hora', hora12(st.slot)], ['Placa', pb], ['Recogida', recogida ? 'Sí, recogemos el carro' : 'No, lo traes tú']];
+    const dl = q('[data-done-list]');
+    dl.innerHTML = '';
+    rows.forEach(([k, v]) => {
+      const dt = document.createElement('dt'); dt.className = 'font-semibold text-gris'; dt.textContent = k;
+      const dd = document.createElement('dd'); dd.className = 'm-0'; dd.textContent = v;
+      dl.append(dt, dd);
+    });
+    const msg = `Hola, aparté una cita desde la página: ${st.serv.toLowerCase()} para el carro de placa ${pb}, el ${fechaLarga(st.day)} a las ${hora12(st.slot)}.${recogida ? ' Necesito recogida.' : ''}${nombre ? ' Mi nombre es ' + nombre + '.' : ''}`;
+    q<HTMLAnchorElement>('[data-done-wa]').href = waLink(msg);
+    const [h, m] = st.slot.split(':').map(Number);
+    const ymd = st.day.replace(/-/g, '');
+    const end = h * 60 + m + 90;
+    const fmt = (mins: number) => String(Math.floor(mins / 60)).padStart(2, '0') + String(mins % 60).padStart(2, '0') + '00';
+    q<HTMLAnchorElement>('[data-done-cal]').href = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+      + '&text=' + encodeURIComponent(`Cita en ${TALLER.nombre}: ${st.serv}`)
+      + `&dates=${ymd}T${fmt(h * 60 + m)}/${ymd}T${fmt(end)}&ctz=America/Bogota`
+      + '&details=' + encodeURIComponent(`Placa ${pb}. ${TALLER.nombre}, ${TALLER.telefono}.`)
+      + '&location=' + encodeURIComponent(`${TALLER.direccion}, ${TALLER.ciudad}`);
+    go(5);
+  }
+
+  q('[data-reset]').addEventListener('click', () => {
+    form.reset();
+    st.serv = st.day = st.slot = '';
+    root.querySelectorAll('[data-group="serv"] button').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+    go(1);
+  });
+
+  // Desde el cotizador: arranca con el servicio elegido
+  document.addEventListener('agendar:servicio', ((e: CustomEvent) => {
+    st.serv = e.detail;
+    root.querySelectorAll<HTMLElement>('[data-group="serv"] button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.value === st.serv)));
+    renderDays();
+    go(2);
+  }) as EventListener);
+
+  loadTaken().then(renderDays);
+  go(1);
+</script>

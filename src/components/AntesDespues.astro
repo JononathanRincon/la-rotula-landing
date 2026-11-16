@@ -1,0 +1,45 @@
+---
+interface Props { pares: { titulo: string; antes: string; despues: string; texto: string }[] }
+const { pares } = Astro.props;
+---
+<section class="bg-tinta text-white" data-ba data-pares={JSON.stringify(pares)}>
+  <div class="wrap flex flex-wrap items-center gap-12 py-24">
+    <div class="flex min-w-0 flex-[1_1_300px] flex-col gap-4">
+      <h2 class="h2 m-0">Antes y después</h2>
+      <p data-ba-text class="lead m-0 text-[#D6DBE6]">{pares[0].texto}</p>
+      <div class="flex flex-wrap gap-2" data-ba-group>
+        {pares.map((p, i) => <button type="button" class="chip-dark" data-value={String(i)} aria-pressed={i === 0 ? 'true' : 'false'}>{p.titulo}</button>)}
+      </div>
+    </div>
+    <div class="flex min-w-0 flex-[2_1_560px] flex-col gap-3.5">
+      <div class="relative aspect-[16/10] w-full overflow-hidden rounded-[10px] bg-overol">
+        <img data-ba-after src={`/img/${pares[0].despues}.jpg`} alt="Después de la reparación" class="absolute inset-0 h-full w-full object-cover" />
+        <img data-ba-before src={`/img/${pares[0].antes}.jpg`} alt="Antes de la reparación" class="absolute inset-0 h-full w-full object-cover" style="clip-path: inset(0 50% 0 0)" />
+        <div data-ba-line aria-hidden="true" class="absolute inset-y-0 left-1/2 -ml-px w-[3px] bg-placa"></div>
+        <span aria-hidden="true" class="absolute top-3.5 left-3.5 rounded bg-tinta/80 px-2.5 py-1.5 text-sm font-semibold">Antes</span>
+        <span aria-hidden="true" class="absolute top-3.5 right-3.5 rounded bg-placa px-2.5 py-1.5 text-sm font-semibold text-tinta">Después</span>
+      </div>
+      <label for="ba-range" class="text-[15px] text-humo">Desliza para comparar</label>
+      <input id="ba-range" data-ba-range type="range" min="0" max="100" value="50" class="min-h-8 w-full accent-placa" />
+    </div>
+  </div>
+</section>
+
+<script>
+  import { chipGroup } from '../scripts/lib';
+  const root = document.querySelector('[data-ba]') as HTMLElement | null;
+  if (root) {
+    const pares = JSON.parse(root.dataset.pares!);
+    const q = <T extends Element = HTMLElement>(s: string) => root.querySelector(s) as T;
+    const range = q<HTMLInputElement>('[data-ba-range]');
+    const set = (v: number) => { q('[data-ba-before]').style.clipPath = `inset(0 ${100 - v}% 0 0)`; q('[data-ba-line]').style.left = v + '%'; };
+    range.addEventListener('input', () => set(Number(range.value)));
+    chipGroup(q('[data-ba-group]'), (v) => {
+      const p = pares[Number(v)];
+      q<HTMLImageElement>('[data-ba-before]').src = `/img/${p.antes}.jpg`;
+      q<HTMLImageElement>('[data-ba-after]').src = `/img/${p.despues}.jpg`;
+      q('[data-ba-text]').textContent = p.texto;
+      range.value = '50'; set(50);
+    });
+  }
+</script>

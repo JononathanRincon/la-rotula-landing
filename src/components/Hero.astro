@@ -1,0 +1,111 @@
+---
+import { TALLER } from '../config';
+const servicios = ['Diagnóstico', 'Frenos', 'Cambio de aceite', 'Suspensión', 'Sistema eléctrico', 'Revisión técnico-mecánica', 'Otra cosa', 'Mi carro está varado'];
+---
+<div class="bg-placa text-tinta">
+  <div class="wrap flex flex-wrap justify-center gap-x-3 gap-y-1 py-2.5 text-center text-base">
+    <strong class="font-semibold">Diagnóstico gratis si agendas desde esta página y reparas con nosotros.</strong>
+    <span>Si solo quieres el diagnóstico, cuesta $60.000.</span>
+  </div>
+</div>
+
+<header class="border-b border-white/10 bg-overol text-white">
+  <div class="wrap flex flex-wrap items-center justify-between gap-4 py-4">
+    <a href="#inicio" class="flex items-baseline gap-2.5 text-white no-underline">
+      <span class="font-display text-[30px] font-extrabold leading-none tracking-[-0.5px]">{TALLER.nombre}</span>
+      <span class="text-[15px] text-humo">{TALLER.tipo}</span>
+    </a>
+    <nav aria-label="Principal" class="flex flex-wrap items-center gap-6 text-base font-medium">
+      <div class="hidden gap-6 md:flex">
+        <a href="#servicios" class="text-white no-underline hover:text-placa">Precios</a>
+        <a href="#cotizar" class="text-white no-underline hover:text-placa">Cotizar</a>
+        <a href="#agendar" class="text-white no-underline hover:text-placa">Agendar</a>
+        <a href="#mi-carro" class="text-white no-underline hover:text-placa">Mi carro</a>
+        <a href="#visitanos" class="text-white no-underline hover:text-placa">Dónde estamos</a>
+      </div>
+      <a href={`tel:${TALLER.telefonoTel}`} class="inline-flex min-h-11 items-center text-white no-underline">{TALLER.telefono}</a>
+    </nav>
+  </div>
+</header>
+
+<section id="inicio" class="bg-overol text-white" data-hero>
+  <div class="wrap flex flex-wrap items-center gap-14 pt-16 pb-18">
+    <div class="min-w-0 flex-[1_1_420px]">
+      <h2 class="m-0 font-display text-[clamp(48px,6.4vw,92px)] font-extrabold leading-[0.95] tracking-[-1px]">Te decimos qué tiene tu carro antes de tocar un tornillo.</h2>
+      <p class="mt-7 max-w-[34em] text-xl leading-relaxed text-[#D6DBE6]">Te mandamos fotos del daño y un presupuesto por WhatsApp. Si no dices que sí, no cambiamos nada.</p>
+      <a href="#resenas" class="mt-7 inline-flex min-h-11 items-center gap-3 text-white no-underline">
+        <span aria-hidden="true" class="text-[22px] tracking-[2px] text-placa">★★★★★</span>
+        <span class="text-[17px]"><strong class="font-semibold">4,8 en Google</strong>, 312 reseñas</span>
+      </a>
+    </div>
+
+    <form aria-label="Pedir cita por WhatsApp" class="flex min-w-0 flex-[1_1_440px] flex-col gap-6" onsubmit="return false">
+      <label for="placa" class="text-[17px] font-semibold">Escribe la placa de tu carro</label>
+      <div class="plate-in max-w-[480px] rounded-[14px] border-[5px] border-tinta bg-placa px-5 pt-3.5 pb-3 shadow-[0_0_0_4px_#F4C400,0_24px_48px_rgba(0,0,0,.35)]">
+        <div aria-hidden="true" class="flex justify-between px-1.5"><span class="size-2.5 rounded-full bg-tinta/55"></span><span class="size-2.5 rounded-full bg-tinta/55"></span></div>
+        <input id="placa" data-plate type="text" autocomplete="off" autocapitalize="characters" maxlength="7" placeholder="ABC 123"
+          class="w-full border-0 bg-transparent p-0 text-center font-display text-[clamp(64px,9vw,112px)] leading-none font-bold tracking-[6px] text-tinta uppercase outline-none focus-visible:outline-none" />
+        <div aria-hidden="true" class="mt-0.5 text-center font-display text-base font-bold tracking-[2px] text-tinta">BOGOTÁ D.C.</div>
+      </div>
+
+      <fieldset class="m-0 border-0 p-0">
+        <legend class="mb-3.5 p-0 text-[17px] font-semibold">¿Qué le pasa?</legend>
+        <div class="flex flex-wrap gap-2.5" data-services>
+          {servicios.map((s, i) => (
+            <button type="button" class:list={['chip-dark', s === 'Mi carro está varado' && 'border-placa']} data-value={s} aria-pressed={i === 0 ? 'true' : 'false'}>{s}</button>
+          ))}
+        </div>
+      </fieldset>
+
+      <div class="flex max-w-[480px] flex-col gap-2">
+        <label for="barrio" data-barrio-label class="text-base font-medium text-[#D6DBE6]">Tu barrio (opcional, para recogida)</label>
+        <input id="barrio" data-barrio type="text" autocomplete="address-level3" placeholder="Ej. Cedritos" maxlength="40"
+          class="min-h-12 rounded-lg border-2 border-white/35 bg-white/5 px-3.5 py-2.5 text-[17px] text-white placeholder:text-white/40" />
+      </div>
+
+      <div class="flex flex-col items-start gap-2.5">
+        <a data-wa data-cta="hero" href="#" target="_blank" rel="noopener" class="btn-placa btn-big min-h-14">Pedir cita por WhatsApp</a>
+        <span data-summary class="text-[15px] text-humo">Se abre WhatsApp con tu placa y el servicio que elegiste.</span>
+        <a href="#agendar" class="inline-flex min-h-11 items-center text-base font-medium text-white">O aparta día y hora en línea</a>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  import { chipGroup, placaLimpia, placaBonita, waLink, track } from '../scripts/lib';
+  const root = document.querySelector('[data-hero]')!;
+  const plate = root.querySelector('[data-plate]') as HTMLInputElement;
+  const barrio = root.querySelector('[data-barrio]') as HTMLInputElement;
+  const barrioLabel = root.querySelector('[data-barrio-label]')!;
+  const wa = root.querySelector('[data-wa]') as HTMLAnchorElement;
+  const summary = root.querySelector('[data-summary]')!;
+  const waAll = document.querySelectorAll<HTMLAnchorElement>('[data-wa-general]');
+  const VARADO = 'Mi carro está varado';
+  let servicio = 'Diagnóstico';
+
+  function update() {
+    const p = placaLimpia(plate.value);
+    const placa = p ? placaBonita(p) : '(sin placa)';
+    const donde = barrio.value.trim() ? ` Estoy en ${barrio.value.trim()}.` : '';
+    const msg = servicio === VARADO
+      ? `Hola, mi carro de placa ${placa} está varado y necesito grúa.${donde || ' Estoy en: '}`
+      : `Hola, vengo de la página web y quiero agendar ${servicio.toLowerCase()} para el carro de placa ${placa}.${donde}`;
+    const href = waLink(msg);
+    wa.href = href;
+    waAll.forEach((a) => (a.href = href));
+    wa.textContent = servicio === VARADO ? 'Pedir grúa por WhatsApp' : 'Pedir cita por WhatsApp';
+    barrioLabel.textContent = servicio === VARADO ? '¿Dónde está el carro? Barrio o dirección' : 'Tu barrio (opcional, para recogida)';
+    summary.textContent = servicio === VARADO
+      ? 'Se abre WhatsApp con tu placa y la ubicación.'
+      : p ? `Se abre WhatsApp con la placa ${placaBonita(p)} y el servicio: ${servicio.toLowerCase()}.` : 'Se abre WhatsApp con tu placa y el servicio que elegiste.';
+  }
+  plate.addEventListener('input', () => { plate.value = plate.value.toUpperCase(); update(); });
+  barrio.addEventListener('input', update);
+  chipGroup(root.querySelector('[data-services]')!, (v) => { servicio = v; update(); });
+  document.addEventListener('click', (e) => {
+    const a = (e.target as Element).closest('a[data-cta]') as HTMLAnchorElement | null;
+    if (a) track(a.dataset.cta!, servicio);
+  });
+  update();
+</script>

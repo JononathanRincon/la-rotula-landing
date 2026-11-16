@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  --color-placa: #F4C400;
+  --color-placa-osc: #B88F00;
+  --color-overol: #1F2A44;
+  --color-overol-osc: #16203A;
+  --color-tinta: #0E1420;
+  --color-concreto: #E6E8EB;
+  --color-gris: #4A5468;
+  --color-gris-claro: #D5D9E0;
+  --color-humo: #C5CCDA;
+  --font-sans: "Barlow", system-ui, sans-serif;
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-white text-tinta font-sans antialiased; }
+  a, button, input, summary { -webkit-tap-highlight-color: transparent; }
+  :focus-visible { outline: 3px solid var(--color-placa); outline-offset: 3px; }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-stopped { overflow: hidden; }
+  [hidden] { display: none !important; }
+  ::placeholder { color: rgb(14 20 32 / 0.35); }
+}
+
+@utility wrap { @apply mx-auto w-full max-w-[1200px] px-6; }
+@utility h2 { @apply font-display font-extrabold leading-none tracking-[-0.5px] text-[clamp(40px,4.6vw,64px)]; }
+@utility lead { @apply text-lg leading-relaxed; }
+@utility btn { @apply inline-flex min-h-12 items-center justify-center rounded-lg px-6 py-3 font-semibold no-underline transition-colors; }
+@utility btn-placa { @apply btn bg-placa text-tinta hover:bg-[#ffd21a]; }
+@utility btn-overol { @apply btn bg-overol text-white hover:bg-tinta; }
+@utility btn-linea { @apply btn border-2 border-overol text-overol hover:bg-overol hover:text-white; }
+@utility btn-big { @apply font-display text-2xl font-bold; }
+@utility chip { @apply inline-flex min-h-11 cursor-pointer items-center rounded-full border-2 px-4 py-2 text-base transition-colors; }
+@utility chip-dark { @apply chip border-white/45 bg-transparent text-white aria-pressed:border-placa aria-pressed:bg-placa aria-pressed:font-semibold aria-pressed:text-tinta; }
+@utility chip-light { @apply chip border-[#9AA3B2] bg-white text-tinta aria-pressed:border-overol aria-pressed:bg-overol aria-pressed:font-semibold aria-pressed:text-white; }
+@utility field { @apply min-h-12 w-full rounded-lg border-2 border-[#9AA3B2] bg-white px-3.5 py-2.5 text-lg text-tinta; }
+@utility field-plate { @apply font-display text-xl font-bold uppercase tracking-[2px]; }
+@utility label { @apply text-base font-semibold; }
+@utility alert { @apply rounded-lg bg-[#FDECEA] px-3.5 py-3 text-base text-[#8A1C12]; }
+@utility sr { @apply sr-only; }
+
+
+/* Recorrido */
+.chapter { opacity: 0; transform: translateY(18px); transition: opacity .45s ease, transform .45s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
+.chapter.is-active { opacity: 1; transform: none; pointer-events: auto; }
+@media (prefers-reduced-motion: no-preference) {
+  .plate-in { animation: plateIn .7s cubic-bezier(.2,.8,.2,1) both; }
+  .hint-bob { animation: hintBob 1.6s ease-in-out infinite; }
+}
+@keyframes plateIn { from { transform: translateY(24px) rotate(-3deg); opacity: 0 } to { transform: none; opacity: 1 } }
+@keyframes hintBob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(6px) } }
+
+details > summary { list-style: none; cursor: pointer; }
+details > summary::-webkit-details-marker { display: none; }
+details[open] .faq-sign { transform: rotate(45deg); }
+.faq-sign { transition: transform .2s; }
+@media (prefers-reduced-motion: reduce) { .faq-sign, .chapter { transition: none; } }
+
+.wa-float { display: none; }
+@media (max-width: 760px) { .wa-float { display: flex; } body { padding-bottom: 80px; } }

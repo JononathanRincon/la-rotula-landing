@@ -1,0 +1,121 @@
+---
+import { TALLER } from '../config';
+const capitulos = [
+  { desde: 0, hasta: 0.12 },
+  { desde: 0.2, hasta: 0.34 },
+  { desde: 0.4, hasta: 0.62 },
+  { desde: 0.66, hasta: 0.82 },
+  { desde: 0.9, hasta: 1.01 },
+];
+---
+<section id="recorrido" aria-label="Recorrido por el taller" class="relative bg-tinta text-white" data-recorrido>
+  <!-- Versión animada: el video avanza con el scroll -->
+  <div data-motion class="relative h-[520vh]">
+    <div class="sticky top-0 h-[100svh] overflow-hidden">
+      <video data-video class="absolute inset-0 h-full w-full object-cover" muted playsinline preload="auto" poster="/img/poster.jpg" aria-hidden="true"
+        data-src-sm="/video/recorrido-540.mp4" data-src-lg="/video/recorrido-720.mp4"></video>
+      <div aria-hidden="true" class="absolute inset-0 bg-[linear-gradient(to_top,rgba(14,20,32,.85)_0%,rgba(14,20,32,.25)_38%,rgba(14,20,32,0)_60%),linear-gradient(to_bottom,rgba(14,20,32,.55)_0%,rgba(14,20,32,0)_22%)]"></div>
+
+      <div class="absolute inset-x-0 top-0 flex items-center justify-between gap-4 px-6 py-5">
+        <span class="font-display text-[26px] font-extrabold tracking-[-0.5px]">{TALLER.nombre}</span>
+        <a href="#inicio" class="inline-flex min-h-11 items-center rounded-full border-2 border-white/60 bg-tinta/35 px-4 py-2.5 text-base font-semibold text-white no-underline">Saltar al formulario</a>
+      </div>
+
+      <div class="absolute inset-x-0 bottom-0 px-6 pb-14">
+        <div class="relative mx-auto min-h-[220px] max-w-[1200px]">
+          <div class="chapter is-active absolute inset-x-0 bottom-0 flex flex-col gap-3.5" data-ch="0" data-from={capitulos[0].desde} data-to={capitulos[0].hasta}>
+            <h1 class="m-0 font-display text-[clamp(56px,9vw,128px)] font-extrabold leading-[0.9] tracking-[-1.5px]">{TALLER.nombre}</h1>
+            <p class="m-0 text-[clamp(18px,2vw,22px)] text-[#E3E7EF]">{TALLER.tipo} en {TALLER.barrio}, {TALLER.ciudad}</p>
+            <span class="hint-bob mt-4 font-semibold text-placa">Desliza para entrar</span>
+          </div>
+          <div class="chapter absolute inset-x-0 bottom-0 max-w-[18em]" data-ch="1" data-from={capitulos[1].desde} data-to={capitulos[1].hasta}>
+            <p class="m-0 font-display text-[clamp(40px,5.5vw,76px)] font-extrabold leading-[0.98]">Pasa. Así recibimos tu carro.</p>
+          </div>
+          <div class="chapter absolute inset-x-0 bottom-0 flex max-w-[18em] flex-col gap-3" data-ch="2" data-from={capitulos[2].desde} data-to={capitulos[2].hasta}>
+            <p class="m-0 font-display text-[clamp(40px,5.5vw,76px)] font-extrabold leading-[0.98]">Primero lo conectamos al escáner.</p>
+            <p class="m-0 text-[clamp(17px,1.8vw,21px)] text-[#E3E7EF]">Sabemos qué falla antes de cotizarte.</p>
+          </div>
+          <div class="chapter absolute inset-x-0 bottom-0 flex max-w-[18em] flex-col gap-3" data-ch="3" data-from={capitulos[3].desde} data-to={capitulos[3].hasta}>
+            <p class="m-0 font-display text-[clamp(40px,5.5vw,76px)] font-extrabold leading-[0.98]">Te mandamos la foto del daño por WhatsApp.</p>
+            <p class="m-0 text-[clamp(17px,1.8vw,21px)] text-[#E3E7EF]">Y no cambiamos nada sin tu sí.</p>
+          </div>
+          <div class="chapter absolute inset-x-0 bottom-0 flex flex-col items-start gap-5" data-ch="4" data-from={capitulos[4].desde} data-to={capitulos[4].hasta}>
+            <p class="m-0 font-display text-[clamp(40px,5.5vw,76px)] font-extrabold leading-[0.98]">Escribe tu placa y agenda.</p>
+            <a href="#inicio" class="btn-placa btn-big">Agendar mi cita</a>
+          </div>
+        </div>
+      </div>
+
+      <div aria-hidden="true" class="absolute inset-x-0 bottom-0 h-1 bg-white/15"><div data-progress class="h-1 w-0 bg-placa"></div></div>
+    </div>
+  </div>
+
+  <!-- Versión sin animación (movimiento reducido) -->
+  <div data-static hidden>
+    <picture>
+      <source srcset="/img/fachada.webp" type="image/webp" />
+      <img src="/img/fachada.jpg" alt="Fachada del taller de noche, con la persiana roja y el letrero iluminado" class="block h-[70svh] w-full object-cover" />
+    </picture>
+    <div class="wrap flex flex-col gap-2.5 py-8 pb-12">
+      <h1 class="m-0 font-display text-[clamp(48px,7vw,96px)] font-extrabold leading-[0.9]">{TALLER.nombre}</h1>
+      <p class="m-0 text-xl text-[#E3E7EF]">{TALLER.tipo} en {TALLER.barrio}, {TALLER.ciudad}</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import Lenis from 'lenis';
+
+  const root = document.querySelector('[data-recorrido]')!;
+  const motion = root.querySelector('[data-motion]') as HTMLElement;
+  const still = root.querySelector('[data-static]') as HTMLElement;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduce) {
+    motion.remove();
+    still.hidden = false;
+  } else {
+    gsap.registerPlugin(ScrollTrigger);
+    const lenis = new Lenis({ anchors: true, lerp: 0.12 });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((t) => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+
+    const video = root.querySelector('[data-video]') as HTMLVideoElement;
+    video.src = window.innerWidth < 768 ? video.dataset.srcSm! : video.dataset.srcLg!;
+    video.muted = true;
+    video.load();
+    const unlock = () => { video.play().then(() => video.pause()).catch(() => {}); };
+    window.addEventListener('touchstart', unlock, { once: true, passive: true });
+    window.addEventListener('pointerdown', unlock, { once: true });
+
+    const chapters = Array.from(root.querySelectorAll<HTMLElement>('.chapter'));
+    const bar = root.querySelector('[data-progress]') as HTMLElement;
+    let target = 0;
+    let current = 0;
+
+    ScrollTrigger.create({
+      trigger: motion,
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: (self) => {
+        target = self.progress;
+        bar.style.width = (self.progress * 100).toFixed(1) + '%';
+        chapters.forEach((c) => {
+          const on = self.progress >= Number(c.dataset.from) && self.progress < Number(c.dataset.to);
+          c.classList.toggle('is-active', on);
+        });
+      },
+    });
+
+    gsap.ticker.add(() => {
+      if (!video.duration || video.readyState < 1) return;
+      const diff = target - current;
+      if (Math.abs(diff) < 0.0004) return;
+      current += diff * 0.16;
+      if (!video.seeking) video.currentTime = Math.min(video.duration - 0.05, current * video.duration);
+    });
+  }
+</script>

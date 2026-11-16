@@ -1,0 +1,196 @@
+---
+import Base from '../layouts/Base.astro';
+import { TALLER, ETAPAS } from '../config';
+---
+<Base title={`Panel | ${TALLER.nombre}`} noindex>
+  <div class="min-h-svh bg-concreto" data-panel-app data-etapas={JSON.stringify(ETAPAS)}>
+    <header class="bg-overol text-white">
+      <div class="wrap flex flex-wrap items-center justify-between gap-4 py-4">
+        <span class="font-display text-[26px] font-extrabold">{TALLER.nombre} <span class="font-sans text-base font-medium text-humo">Panel del taller</span></span>
+        <button type="button" data-logout hidden class="min-h-11 rounded-lg border-2 border-white/50 px-4 font-semibold">Salir</button>
+      </div>
+    </header>
+
+    <!-- Login -->
+    <form data-login class="mx-auto mt-16 flex max-w-[420px] flex-col gap-4 rounded-xl bg-white p-7" novalidate>
+      <h1 class="m-0 font-display text-[34px] font-extrabold text-overol">Entrar al panel</h1>
+      <label for="clave" class="label">Clave del taller</label>
+      <input id="clave" name="clave" type="password" autocomplete="current-password" class="field" required />
+      <p data-login-err role="alert" hidden class="alert m-0"></p>
+      <button type="submit" class="btn-overol">Entrar</button>
+    </form>
+
+    <!-- App -->
+    <main data-app hidden class="wrap flex flex-col gap-10 py-8">
+      <nav aria-label="Secciones del panel" class="flex flex-wrap gap-2" data-tabs>
+        <button type="button" class="chip-light" data-value="citas" aria-pressed="true">Citas</button>
+        <button type="button" class="chip-light" data-value="carros" aria-pressed="false">Carros en el taller</button>
+        <button type="button" class="chip-light" data-value="recordatorios" aria-pressed="false">Recordatorios</button>
+      </nav>
+
+      <section data-tab="citas" class="flex flex-col gap-4">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <h2 class="m-0 font-display text-[34px] font-extrabold text-overol">Citas</h2>
+          <button type="button" data-refresh class="btn-linea min-h-11 py-2">Actualizar</button>
+        </div>
+        <div data-citas class="flex flex-col gap-6"></div>
+      </section>
+
+      <section data-tab="carros" hidden class="flex flex-col gap-6">
+        <h2 class="m-0 font-display text-[34px] font-extrabold text-overol">Carros en el taller</h2>
+        <form data-veh-form class="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] items-end gap-3.5 rounded-xl bg-white p-5" novalidate>
+          <div class="flex flex-col gap-1.5"><label for="v-placa" class="label">Placa</label><input id="v-placa" name="placa" maxlength="7" class="field field-plate" placeholder="ABC 123" /></div>
+          <div class="flex flex-col gap-1.5"><label for="v-modelo" class="label">Carro</label><input id="v-modelo" name="modelo" maxlength="60" class="field" placeholder="Mazda 2" /></div>
+          <div class="flex flex-col gap-1.5"><label for="v-etapa" class="label">Etapa</label>
+            <select id="v-etapa" name="etapa" class="field">{ETAPAS.map((e, i) => <option value={i + 1}>{i + 1}. {e}</option>)}</select></div>
+          <div class="flex flex-col gap-1.5"><label for="v-eta" class="label">Hora de entrega</label><input id="v-eta" name="eta" maxlength="60" class="field" placeholder="Hoy a las 4:00 p.m." /></div>
+          <div class="flex flex-col gap-1.5 sm:col-span-2"><label for="v-nota" class="label">Nota para el cliente</label><input id="v-nota" name="nota" maxlength="240" class="field" placeholder="Estamos cambiando las pastillas." /></div>
+          <button type="submit" class="btn-placa">Guardar</button>
+          <p data-veh-err role="alert" hidden class="alert m-0 sm:col-span-2"></p>
+        </form>
+        <div data-carros class="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-4"></div>
+      </section>
+
+      <section data-tab="recordatorios" hidden class="flex flex-col gap-4">
+        <h2 class="m-0 font-display text-[34px] font-extrabold text-overol">Recordatorios pendientes</h2>
+        <p class="m-0 text-gris">Escribe a cada cliente el día indicado y márcalo como enviado.</p>
+        <div data-recs class="flex flex-col gap-3"></div>
+      </section>
+    </main>
+  </div>
+</Base>
+
+<script>
+  import { rpc, ApiError, chipGroup, fechaLarga, hora12, placaBonita, placaLimpia, hoyBogota, WHATSAPP } from '../scripts/lib';
+  const app = document.querySelector('[data-panel-app]') as HTMLElement;
+  const ETAPAS: string[] = JSON.parse(app.dataset.etapas!);
+  const q = <T extends Element = HTMLElement>(s: string) => app.querySelector(s) as T;
+  const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+  const KEY = 'rotula-panel-key';
+  let key = sessionStorage.getItem(KEY) || '';
+  const wa = (cel: string, msg: string) => `https://wa.me/57${cel}?text=${encodeURIComponent(msg)}`;
+
+  type Cita = { id: string; service: string; day: string; slot: string; plate: string; phone: string; name: string | null; pickup: boolean; status: string };
+  type Veh = { plate: string; model: string | null; stage: number; note: string | null; eta: string | null; updated_at: string };
+  type Rec = { id: string; plate: string; phone: string; kind: string; due_date: string; remind_on: string };
+
+  async function load() {
+    const data = await rpc<{ appointments: Cita[]; vehicles: Veh[]; reminders: Rec[] }>('landing_admin_overview', { p_key: key, p_from: hoyBogota() });
+    renderCitas(data.appointments); renderCarros(data.vehicles); renderRecs(data.reminders);
+  }
+
+  function renderCitas(list: Cita[]) {
+    const box = q('[data-citas]');
+    if (!list.length) { box.innerHTML = '<p class="m-0 rounded-xl bg-white p-5 text-gris">No hay citas desde hoy.</p>'; return; }
+    const byDay = new Map<string, Cita[]>();
+    list.forEach((c) => byDay.set(c.day, [...(byDay.get(c.day) || []), c]));
+    const color: Record<string, string> = { pendiente: 'bg-[#FFF4C2] text-[#6B5300]', confirmada: 'bg-[#DDEBFF] text-[#123E7C]', atendida: 'bg-[#DDF3E4] text-[#14532D]', cancelada: 'bg-[#F2F3F5] text-[#5A6478] line-through' };
+    box.innerHTML = [...byDay.entries()].map(([day, cs]) => `
+      <div class="flex flex-col gap-2.5"><h3 class="m-0 font-display text-2xl font-bold first-letter:uppercase">${esc(fechaLarga(day))}</h3>
+      ${cs.map((c) => `
+        <article class="flex flex-wrap items-center justify-between gap-4 rounded-xl bg-white p-4.5">
+          <div class="flex flex-col gap-1">
+            <span class="font-display text-[22px] font-bold">${esc(hora12(c.slot.slice(0, 5)))} · ${esc(c.service)}</span>
+            <span class="text-gris">Placa <strong class="text-tinta">${esc(placaBonita(c.plate))}</strong>${c.name ? `, ${esc(c.name)}` : ''}, ${esc(c.phone)}${c.pickup ? ', <strong class="text-tinta">con recogida</strong>' : ''}</span>
+            <span class="w-fit rounded px-2 py-0.5 text-sm font-semibold ${color[c.status] || ''}">${esc(c.status)}</span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <a class="btn-placa min-h-11 px-4 py-2 text-base" target="_blank" rel="noopener" href="${wa(c.phone, `Hola${c.name ? ' ' + c.name : ''}, te escribimos de La Rótula para confirmar tu cita de ${c.service.toLowerCase()} el ${fechaLarga(c.day)} a las ${hora12(c.slot.slice(0, 5))} para el carro de placa ${placaBonita(c.plate)}.`)}">WhatsApp</a>
+            ${['confirmada', 'atendida', 'cancelada'].filter((s) => s !== c.status).map((s) => `<button type="button" class="btn-linea min-h-11 px-3.5 py-2 text-base" data-cita="${c.id}" data-status="${s}">${s === 'confirmada' ? 'Confirmar' : s === 'atendida' ? 'Atendida' : 'Cancelar'}</button>`).join('')}
+          </div>
+        </article>`).join('')}</div>`).join('');
+  }
+
+  function renderCarros(list: Veh[]) {
+    q('[data-carros]').innerHTML = list.length ? list.map((v) => `
+      <article class="flex flex-col gap-2 rounded-xl bg-white p-4.5">
+        <div class="flex items-baseline justify-between gap-2"><span class="font-display text-[22px] font-bold">${esc(placaBonita(v.plate))}</span><span class="text-gris">${esc(v.model || '')}</span></div>
+        <span class="font-semibold text-overol">${v.stage}. ${esc(ETAPAS[v.stage - 1])}</span>
+        ${v.note ? `<span class="text-[15px] text-gris">${esc(v.note)}</span>` : ''}
+        ${v.eta ? `<span class="text-[15px]">Entrega: ${esc(v.eta)}</span>` : ''}
+        <div class="mt-1 flex flex-wrap gap-2">
+          <button type="button" class="btn-linea min-h-11 px-3.5 py-2 text-base" data-edit="${esc(v.plate)}" data-model="${esc(v.model || '')}" data-stage="${v.stage}" data-note="${esc(v.note || '')}" data-eta="${esc(v.eta || '')}">Editar</button>
+          ${v.stage < 6 ? `<button type="button" class="btn-overol min-h-11 px-3.5 py-2 text-base" data-next="${esc(v.plate)}" data-model="${esc(v.model || '')}" data-stage="${v.stage}" data-eta="${esc(v.eta || '')}">Pasar a: ${esc(ETAPAS[v.stage])}</button>` : `<button type="button" class="btn-linea min-h-11 px-3.5 py-2 text-base" data-remove="${esc(v.plate)}">Quitar (entregado)</button>`}
+        </div>
+      </article>`).join('') : '<p class="m-0 rounded-xl bg-white p-5 text-gris">No hay carros registrados.</p>';
+  }
+
+  function renderRecs(list: Rec[]) {
+    const hoy = hoyBogota();
+    q('[data-recs]').innerHTML = list.length ? list.map((r) => {
+      const que = r.kind === 'Las dos' ? 'la técnico-mecánica y el SOAT' : r.kind === 'SOAT' ? 'el SOAT' : 'la técnico-mecánica';
+      const due = r.remind_on <= hoy;
+      return `<article class="flex flex-wrap items-center justify-between gap-4 rounded-xl bg-white p-4.5">
+        <div class="flex flex-col gap-1"><span class="font-semibold">${esc(placaBonita(r.plate))}, ${esc(r.kind)}, vence el ${esc(fechaLarga(r.due_date))}</span>
+        <span class="${due ? 'font-semibold text-[#8A1C12]' : 'text-gris'}">${due ? 'Escribir hoy' : 'Escribir el ' + esc(fechaLarga(r.remind_on))}, ${esc(r.phone)}</span></div>
+        <div class="flex flex-wrap gap-2">
+          <a class="btn-placa min-h-11 px-4 py-2 text-base" target="_blank" rel="noopener" href="${wa(r.phone, `Hola, te escribimos de La Rótula: ${que} del carro de placa ${placaBonita(r.plate)} se vence el ${fechaLarga(r.due_date)}. ¿Quieres agendar la revisión?`)}">WhatsApp</a>
+          <button type="button" class="btn-linea min-h-11 px-3.5 py-2 text-base" data-sent="${r.id}">Marcar enviado</button>
+        </div></article>`;
+    }).join('') : '<p class="m-0 rounded-xl bg-white p-5 text-gris">No hay recordatorios pendientes.</p>';
+  }
+
+  async function act(fn: string, args: Record<string, unknown>) {
+    try { await rpc(fn, { p_key: key, ...args }); await load(); }
+    catch (e) { alertBox((e as ApiError).message); }
+  }
+  function alertBox(m: string) { const p = q('[data-veh-err]'); p.textContent = m; p.hidden = false; }
+
+  app.addEventListener('click', (e) => {
+    const t = (e.target as Element).closest('button') as HTMLButtonElement | null;
+    if (!t) return;
+    const d = t.dataset;
+    if (d.cita) act('landing_admin_set_appointment', { p_id: d.cita, p_status: d.status });
+    if (d.next) act('landing_admin_set_vehicle', { p_plate: d.next, p_model: d.model, p_stage: Number(d.stage) + 1, p_note: '', p_eta: d.eta });
+    if (d.remove && confirmar(`¿Quitar ${placaBonita(d.remove)} de la lista?`)) act('landing_admin_remove_vehicle', { p_plate: d.remove });
+    if (d.sent) act('landing_admin_mark_reminder', { p_id: d.sent });
+    if (d.edit) {
+      const f = q<HTMLFormElement>('[data-veh-form]');
+      (f.elements.namedItem('placa') as HTMLInputElement).value = placaBonita(d.edit);
+      (f.elements.namedItem('modelo') as HTMLInputElement).value = d.model || '';
+      (f.elements.namedItem('etapa') as HTMLSelectElement).value = d.stage || '1';
+      (f.elements.namedItem('nota') as HTMLInputElement).value = d.note || '';
+      (f.elements.namedItem('eta') as HTMLInputElement).value = d.eta || '';
+      f.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+  // Confirmación en la propia página (sin diálogos del navegador)
+  let pendingConfirm = '';
+  function confirmar(msg: string) {
+    if (pendingConfirm === msg) { pendingConfirm = ''; return true; }
+    pendingConfirm = msg; alertBox(msg + ' Toca de nuevo para confirmar.'); return false;
+  }
+
+  q<HTMLFormElement>('[data-veh-form]').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    q('[data-veh-err]').hidden = true;
+    const f = e.target as HTMLFormElement;
+    const val = (n: string) => (f.elements.namedItem(n) as HTMLInputElement).value;
+    try {
+      await rpc('landing_admin_set_vehicle', { p_key: key, p_plate: placaLimpia(val('placa')), p_model: val('modelo'), p_stage: Number(val('etapa')), p_note: val('nota'), p_eta: val('eta') });
+      f.reset(); await load();
+    } catch (ex) { alertBox((ex as ApiError).message); }
+  });
+
+  chipGroup(q('[data-tabs]'), (v) => app.querySelectorAll<HTMLElement>('[data-tab]').forEach((s) => (s.hidden = s.dataset.tab !== v)));
+  q('[data-refresh]').addEventListener('click', () => load());
+
+  async function enter() {
+    try {
+      await load();
+      sessionStorage.setItem(KEY, key);
+      q('[data-login]').hidden = true; q('[data-app]').hidden = false; q('[data-logout]').hidden = false;
+    } catch (e) {
+      sessionStorage.removeItem(KEY);
+      const p = q('[data-login-err]'); p.textContent = (e as ApiError).message; p.hidden = false;
+    }
+  }
+  q<HTMLFormElement>('[data-login]').addEventListener('submit', (e) => {
+    e.preventDefault();
+    key = (q<HTMLInputElement>('#clave')).value.trim();
+    enter();
+  });
+  q('[data-logout]').addEventListener('click', () => { sessionStorage.removeItem(KEY); location.reload(); });
+  if (key) enter();
+  void WHATSAPP;
+</script>

@@ -1,0 +1,56 @@
+---
+import '@fontsource/barlow/400.css';
+import '@fontsource/barlow/500.css';
+import '@fontsource/barlow/600.css';
+import '@fontsource/barlow-condensed/700.css';
+import '@fontsource/barlow-condensed/800.css';
+import '../styles/global.css';
+import { TALLER } from '../config';
+
+interface Props { title: string; description?: string; noindex?: boolean; schema?: object }
+const { title, description = '', noindex = false, schema } = Astro.props;
+const ga4 = import.meta.env.PUBLIC_GA4_ID;
+const pixel = import.meta.env.PUBLIC_META_PIXEL_ID;
+---
+<!doctype html>
+<html lang="es-CO">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#1F2A44" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:image" content="/img/fachada.jpg" />
+    <meta property="og:locale" content="es_CO" />
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+    {ga4 && (
+      <>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${ga4}`}></script>
+        <script is:inline define:vars={{ ga4 }}>
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = function () { window.dataLayer.push(arguments); };
+          window.gtag('js', new Date());
+          window.gtag('config', ga4);
+        </script>
+      </>
+    )}
+    {pixel && (
+      <script is:inline define:vars={{ pixel }}>
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', pixel); fbq('track', 'PageView');
+      </script>
+    )}
+  </head>
+  <body>
+    <slot />
+    {TALLER.demo && !noindex && (
+      <p class="bg-tinta px-6 py-3 text-center text-sm text-humo">
+        Sitio de demostración: {TALLER.nombre} es un taller ficticio. Las reseñas, datos de contacto y fotos son de ejemplo.
+      </p>
+    )}
+  </body>
+</html>
