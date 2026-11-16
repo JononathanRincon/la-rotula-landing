@@ -22,20 +22,20 @@ const pasos = ['Servicio', 'Día', 'Hora', 'Tus datos'];
         <button type="button" data-back class="btn-linea min-h-11 px-3.5 py-2 text-[15px]">Volver al paso anterior</button>
       </div>
 
-      <fieldset data-panel="1" class="m-0 border-0 p-0">
+      <fieldset data-panel="1" class="m-0 min-w-0 border-0 p-0">
         <legend class="mb-4 p-0 font-display text-[28px] font-bold">¿Qué necesita tu carro?</legend>
         <div class="flex flex-wrap gap-2.5" data-group="serv">
           {servicios.map((s) => <button type="button" class="chip-light min-h-12 rounded-lg text-[17px]" data-value={s} aria-pressed="false">{s}</button>)}
         </div>
       </fieldset>
 
-      <fieldset data-panel="2" hidden class="m-0 border-0 p-0">
+      <fieldset data-panel="2" hidden class="m-0 min-w-0 border-0 p-0">
         <legend class="mb-4 p-0 font-display text-[28px] font-bold">¿Qué día lo traes?</legend>
         <div class="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-2.5" data-days></div>
         <p class="mt-3.5 mb-0 text-[15px] text-gris">Los sábados atendemos hasta las 2:00 p.m. Los domingos no abrimos.</p>
       </fieldset>
 
-      <fieldset data-panel="3" hidden class="m-0 border-0 p-0">
+      <fieldset data-panel="3" hidden class="m-0 min-w-0 border-0 p-0">
         <legend class="mb-4 p-0 font-display text-[28px] font-bold">¿A qué hora?</legend>
         <p data-slots-loading class="m-0 text-gris">Cargando horarios…</p>
         <div class="grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] gap-2.5" data-slots></div>
