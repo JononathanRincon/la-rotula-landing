@@ -13,7 +13,7 @@ const servicios = ['Diagnóstico', 'Frenos', 'Cambio de aceite', 'Suspensión', 
   <div class="wrap flex flex-wrap items-center justify-between gap-4 py-4">
     <a href="#inicio" class="flex items-baseline gap-2.5 text-white no-underline">
       <span class="font-display text-[30px] font-extrabold leading-none tracking-[-0.5px]">{TALLER.nombre}</span>
-      <span class="text-[15px] text-humo">{TALLER.tipo}</span>
+      <span class="text-[15px] text-humo movil:hidden">{TALLER.tipo}</span>
     </a>
     <nav aria-label="Principal" class="flex flex-wrap items-center gap-6 text-base font-medium">
       <div class="hidden gap-6 md:flex">
@@ -22,24 +22,37 @@ const servicios = ['Diagnóstico', 'Frenos', 'Cambio de aceite', 'Suspensión', 
         <a href="#mi-carro" class="text-white no-underline hover:text-placa">Mi carro</a>
         <a href="#visitanos" class="text-white no-underline hover:text-placa">Dónde estamos</a>
       </div>
-      <a href={`tel:${TALLER.telefonoTel}`} class="inline-flex min-h-11 items-center text-white no-underline">{TALLER.telefono}</a>
+      <a href={`tel:${TALLER.telefonoTel}`} class="inline-flex min-h-11 items-center text-white no-underline movil:hidden">{TALLER.telefono}</a>
+      <details class="menu-movil relative md:hidden">
+        <summary aria-label="Abrir menú" class="flex size-11 cursor-pointer items-center justify-center rounded-lg border-2 border-white/40">
+          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </summary>
+        <div class="absolute top-13 right-0 z-40 flex w-60 flex-col rounded-xl bg-white p-2 text-tinta shadow-[0_16px_40px_rgba(0,0,0,.3)]">
+          <a href="#cotizar" class="rounded-lg px-4 py-3 font-semibold text-tinta no-underline hover:bg-concreto">Cotizar</a>
+          <a href="#agendar" class="rounded-lg px-4 py-3 font-semibold text-tinta no-underline hover:bg-concreto">Agendar cita</a>
+          <a href="#mi-carro" class="rounded-lg px-4 py-3 font-semibold text-tinta no-underline hover:bg-concreto">¿Cómo va mi carro?</a>
+          <a href="#preguntas" class="rounded-lg px-4 py-3 font-semibold text-tinta no-underline hover:bg-concreto">Preguntas</a>
+          <a href="#visitanos" class="rounded-lg px-4 py-3 font-semibold text-tinta no-underline hover:bg-concreto">Dónde estamos</a>
+          <a href={`tel:${TALLER.telefonoTel}`} class="mt-1 rounded-lg border-t border-gris-claro px-4 py-3 text-tinta no-underline">Llamar: {TALLER.telefono}</a>
+        </div>
+      </details>
     </nav>
   </div>
 </header>
 
 <section id="inicio" class="bg-overol text-white desk:flex desk:min-h-[calc(100svh-108px)] desk:flex-col desk:justify-center" data-hero>
-  <div class="wrap flex flex-wrap items-center gap-x-14 gap-y-10 py-sec">
+  <div class="wrap flex flex-wrap items-center gap-x-14 gap-y-10 py-sec movil:gap-y-5 movil:pt-6 movil:pb-8">
     <div class="min-w-0 flex-[1_1_420px]">
-      <h2 class="m-0 font-display text-[clamp(40px,min(6.4vw,9.5vh),92px)] font-extrabold leading-[0.95] tracking-[-1px]">Te decimos qué tiene tu carro antes de tocar un tornillo.</h2>
-      <p class="mt-[clamp(14px,3vh,28px)] max-w-[34em] text-[clamp(17px,2.6vh,20px)] leading-relaxed text-[#D6DBE6]">Te mandamos fotos del daño y un presupuesto por WhatsApp. Si no dices que sí, no cambiamos nada.</p>
-      <a href="#resenas" class="mt-[clamp(12px,3vh,28px)] inline-flex min-h-11 items-center gap-3 text-white no-underline">
+      <h2 class="m-0 font-display text-[clamp(40px,min(6.4vw,9.5vh),92px)] movil:text-[38px] font-extrabold leading-[0.95] tracking-[-1px]">Te decimos qué tiene tu carro antes de tocar un tornillo.</h2>
+      <p class="movil:hidden mt-[clamp(14px,3vh,28px)] max-w-[34em] text-[clamp(17px,2.6vh,20px)] leading-relaxed text-[#D6DBE6]">Te mandamos fotos del daño y un presupuesto por WhatsApp. Si no dices que sí, no cambiamos nada.</p>
+      <a href="#resenas" class="movil:mt-3 movil:min-h-0 movil:text-[15px] mt-[clamp(12px,3vh,28px)] inline-flex min-h-11 items-center gap-3 text-white no-underline">
         <span aria-hidden="true" class="text-[22px] tracking-[2px] text-placa">★★★★★</span>
         <span class="text-[17px]"><strong class="font-semibold">4,8 en Google</strong>, 312 reseñas</span>
       </a>
     </div>
 
     <form aria-label="Pedir cita por WhatsApp" class="flex min-w-0 flex-[1_1_440px] flex-col gap-[clamp(12px,2.4vh,24px)]" onsubmit="return false">
-      <label for="placa" class="text-[17px] font-semibold">Escribe la placa de tu carro</label>
+      <label for="placa" class="text-[17px] font-semibold movil:text-base">Escribe la placa de tu carro</label>
       <div class="plate-in max-w-[480px] rounded-[14px] border-[5px] border-tinta bg-placa px-5 pt-[clamp(6px,1.4vh,14px)] pb-[clamp(6px,1.2vh,12px)] shadow-[0_0_0_4px_#F4C400,0_24px_48px_rgba(0,0,0,.35)]">
         <div aria-hidden="true" class="flex justify-between px-1.5"><span class="size-2.5 rounded-full bg-tinta/55"></span><span class="size-2.5 rounded-full bg-tinta/55"></span></div>
         <input id="placa" data-plate type="text" autocomplete="off" autocapitalize="characters" maxlength="7" placeholder="ABC 123"
@@ -48,8 +61,8 @@ const servicios = ['Diagnóstico', 'Frenos', 'Cambio de aceite', 'Suspensión', 
       </div>
 
       <fieldset class="m-0 min-w-0 border-0 p-0">
-        <legend class="mb-3.5 p-0 text-[17px] font-semibold">¿Qué le pasa?</legend>
-        <div class="fila-baja flex flex-wrap gap-2.5" data-services>
+        <legend class="mb-3.5 p-0 text-[17px] font-semibold movil:mb-2.5">¿Qué le pasa?</legend>
+        <div class="fila-baja chip-row -mx-6 flex gap-2.5 overflow-x-auto px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0" data-services>
           {servicios.map((s, i) => (
             <button type="button" class:list={['chip-dark', s === 'Mi carro está varado' && 'border-placa']} data-value={s} aria-pressed={i === 0 ? 'true' : 'false'}>{s}</button>
           ))}
@@ -63,7 +76,7 @@ const servicios = ['Diagnóstico', 'Frenos', 'Cambio de aceite', 'Suspensión', 
       </div>
 
       <div class="flex flex-wrap items-center gap-x-5 gap-y-2.5">
-        <a data-wa data-cta="hero" href="#" target="_blank" rel="noopener" class="btn-placa btn-big min-h-14">Pedir cita por WhatsApp</a>
+        <a data-wa data-cta="hero" href="#" target="_blank" rel="noopener" class="btn-placa btn-big min-h-14 movil:w-full">Pedir cita por WhatsApp</a>
         <span data-summary class="solo-alto w-full text-[15px] text-humo desk:order-last">Se abre WhatsApp con tu placa y el servicio que elegiste.</span>
         <a href="#agendar" class="inline-flex min-h-11 items-center text-base font-medium text-white">O aparta día y hora en línea</a>
       </div>
@@ -107,5 +120,6 @@ const servicios = ['Diagnóstico', 'Frenos', 'Cambio de aceite', 'Suspensión', 
     const a = (e.target as Element).closest('a[data-cta]') as HTMLAnchorElement | null;
     if (a) track(a.dataset.cta!, servicio);
   });
+  document.querySelectorAll('.menu-movil a').forEach((a) => a.addEventListener('click', () => a.closest('details')!.removeAttribute('open')));
   update();
 </script>

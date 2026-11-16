@@ -29,15 +29,15 @@ const marcas = ['Chevrolet', 'Renault', 'Mazda', 'Kia', 'Hyundai', 'Toyota', 'Ni
     <Hero />
 
     <section aria-label="Por qué confiar" class="bg-overol-osc text-white">
-      <div class="wrap grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-x-8 gap-y-5 py-7">
+      <div class="wrap grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-x-8 gap-y-5 py-7 movil:grid-cols-2 movil:gap-x-5 movil:gap-y-4 movil:py-5">
         {confianza.map((t) => (
           <div class="flex flex-col gap-0.5">
-            <span class="font-display text-[28px] leading-tight font-bold text-placa">{t.big}</span>
-            <span class="text-[15px] text-humo">{t.small}</span>
+            <span class="font-display text-[28px] leading-tight font-bold text-placa movil:text-[22px]">{t.big}</span>
+            <span class="text-[15px] text-humo movil:text-[13px] movil:leading-snug">{t.small}</span>
           </div>
         ))}
       </div>
-      <div class="wrap flex flex-wrap gap-x-5.5 gap-y-2 pb-7 text-[15px] text-humo">
+      <div class="wrap flex flex-wrap gap-x-5.5 gap-y-2 pb-7 text-[15px] text-humo movil:flex-nowrap movil:overflow-x-auto movil:whitespace-nowrap movil:pb-5 movil:[scrollbar-width:none]">
         <span>Atendemos:</span>
         {marcas.map((m) => <span class="font-medium text-white">{m}</span>)}
       </div>
@@ -45,15 +45,15 @@ const marcas = ['Chevrolet', 'Renault', 'Mazda', 'Kia', 'Hyundai', 'Toyota', 'Ni
 
     <section id="resenas" class="pantalla bg-white">
       <div class="wrap py-sec">
-        <div class="mb-9 flex flex-wrap items-end justify-between gap-4">
+        <div class="mb-9 flex flex-wrap items-end justify-between gap-4 movil:mb-5">
           <h2 class="h2 m-0 text-overol">Lo que dicen en Google</h2>
           {TALLER.demo && <p class="m-0 rounded bg-[#FFF4C2] px-2.5 py-1.5 text-sm text-[#6B5300]">Reseñas de ejemplo.</p>}
         </div>
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-10">
+        <div class="carrusel grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-10">
           {RESENAS.map((r) => (
             <figure class="m-0 flex flex-col gap-3.5 border-t-4 border-placa pt-5">
               <span role="img" aria-label="5 de 5 estrellas" class="text-lg tracking-[2px] text-placa-osc">★★★★★</span>
-              <blockquote class="m-0 text-[19px] leading-relaxed text-[#1E2636]">{r.texto}</blockquote>
+              <blockquote class="m-0 text-[19px] leading-relaxed text-[#1E2636] movil:text-[17px]">{r.texto}</blockquote>
               <figcaption class="text-[15px] text-gris"><strong class="font-semibold text-tinta">Cliente de ejemplo</strong>, {r.carro}</figcaption>
             </figure>
           ))}
@@ -69,15 +69,15 @@ const marcas = ['Chevrolet', 'Renault', 'Mazda', 'Kia', 'Hyundai', 'Toyota', 'Ni
       <div class="wrap flex flex-wrap gap-x-10 gap-y-12 py-sec desk:flex-nowrap">
         <div class="min-w-0 flex-[999_1_560px]">
           <h2 class="h2 m-0 mb-[clamp(16px,3vh,32px)] text-overol">Así pasa tu carro por el taller</h2>
-          <picture class="solo-alto">
+          <picture class="solo-alto movil:hidden">
             <source srcset="/img/diagnostico.webp" type="image/webp" />
             <img src="/img/diagnostico.jpg" alt="Mecánica conectando el escáner de diagnóstico al carro por la puerta del conductor" loading="lazy" class="mb-10 block aspect-[16/7] w-full rounded-[10px] object-cover" />
           </picture>
-          <ol class="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-x-8 gap-y-[clamp(20px,4vh,40px)] p-0">
+          <ol class="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(200px,1fr))] movil:grid-cols-1 movil:gap-y-4 gap-x-8 gap-y-[clamp(20px,4vh,40px)] p-0">
             {PASOS.map((p, i) => (
-              <li class="flex flex-col gap-2 border-t-4 border-overol pt-[clamp(10px,2vh,20px)]">
-                <span aria-hidden="true" class="font-display text-[clamp(36px,6vh,56px)] leading-none font-extrabold text-overol">{i + 1}</span>
-                <h3 class="m-0 font-display text-[clamp(21px,3.4vh,26px)] leading-tight font-bold">{p.titulo}</h3>
+              <li class="flex flex-col gap-2 border-t-4 border-overol pt-[clamp(10px,2vh,20px)] movil:grid movil:grid-cols-[40px_1fr] movil:gap-x-3 movil:gap-y-1 movil:border-t-2 movil:pt-3">
+                <span aria-hidden="true" class="font-display text-[clamp(36px,6vh,56px)] leading-none font-extrabold text-overol movil:row-span-2 movil:text-[38px]">{i + 1}</span>
+                <h3 class="m-0 font-display text-[clamp(21px,3.4vh,26px)] leading-tight font-bold movil:text-[21px]">{p.titulo}</h3>
                 <p class="m-0 text-[clamp(15px,2.3vh,17px)] leading-snug text-[#2C3547]">{p.texto}</p>
               </li>
             ))}
@@ -124,7 +124,7 @@ const marcas = ['Chevrolet', 'Renault', 'Mazda', 'Kia', 'Hyundai', 'Toyota', 'Ni
       <div class="wrap py-sec">
         <h2 class="h2 m-0 mb-4 text-overol">Quién le mete la mano a tu carro</h2>
         <p class="m-0 mb-[clamp(16px,4vh,40px)] max-w-[40em] text-lg leading-relaxed text-[#2C3547]">El mismo equipo desde 2014, en el mismo local de {TALLER.barrio}.</p>
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-8">
+        <div class="carrusel grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-8">
           {EQUIPO.map((m) => (
             <div class="flex flex-col gap-2.5">
               <picture>

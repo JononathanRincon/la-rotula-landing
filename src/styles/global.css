@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @custom-variant desk (@media (min-width: 900px));
+@custom-variant movil (@media (max-width: 899px));
 
 @theme {
   --color-placa: #F4C400;
@@ -78,6 +79,15 @@ details[open] .faq-sign { transform: rotate(45deg); }
   .fila-baja > button { flex: none; }
   .solo-muy-alto { display: none; }
 }
+/* Carruseles deslizables en celular */
+@media (max-width: 899px) {
+  .carrusel { display: flex !important; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    margin-inline: -24px; padding-inline: 24px; scroll-padding-inline: 24px; gap: 14px !important; }
+  .carrusel::-webkit-scrollbar { display: none; }
+  .carrusel > * { flex: 0 0 82%; scroll-snap-align: start; }
+}
+.menu-movil > summary { list-style: none; }
+.menu-movil > summary::-webkit-details-marker { display: none; }
 .wa-float { display: none; }
 @media (max-width: 760px) { .wa-float { display: flex; } body { padding-bottom: 80px; } body.sin-barra /* Computador con pantalla baja: todo más compacto para que cada sección quepa */
 @media (min-width: 900px) and (max-height: 820px) {
