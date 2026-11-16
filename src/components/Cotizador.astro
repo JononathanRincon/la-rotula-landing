@@ -3,32 +3,32 @@ import { MARCAS, ANIOS, SERVICIOS } from '../config';
 const servs = SERVICIOS.map((s) => ({ id: s.id, base: s.base, fijo: 'fijo' in s ? s.fijo : false, desc: s.desc, tiempo: s.tiempo, img: s.img, alt: s.alt }));
 const ini = servs.find((s) => s.id === 'Frenos')!;
 ---
-<section id="cotizar" class="bg-overol text-white" data-cotizador data-servs={JSON.stringify(servs)}>
-  <div class="wrap flex flex-wrap gap-12 py-22">
+<section id="cotizar" class="pantalla bg-overol text-white" data-cotizador data-servs={JSON.stringify(servs)}>
+  <div class="wrap flex flex-wrap gap-x-12 gap-y-8 py-sec">
     <div class="flex min-w-0 flex-[1_1_320px] flex-col gap-4">
       <h2 class="h2 m-0">¿Cuánto me cuesta?</h2>
       <p class="lead m-0 max-w-[26em] text-[#D6DBE6]">Elige tu carro y el servicio. Te damos un rango de referencia; el valor exacto sale del diagnóstico y lo apruebas antes de empezar.</p>
       <picture class="mt-4 hidden overflow-hidden rounded-xl bg-overol-osc md:block">
         <source data-q-src srcset={`/img/${ini.img}.webp`} type="image/webp" />
         <img data-q-img src={`/img/${ini.img}.jpg`} alt={ini.alt} width="800" height="993" loading="lazy"
-          class="block aspect-[4/5] w-full object-cover transition-opacity duration-300" />
+          class="block h-[clamp(200px,46vh,560px)] w-full object-cover transition-opacity duration-300" />
       </picture>
     </div>
-    <div class="flex min-w-0 flex-[2_1_560px] flex-col gap-7">
+    <div class="flex min-w-0 flex-[2_1_560px] flex-col gap-[clamp(14px,2.8vh,28px)]">
       <fieldset class="m-0 min-w-0 border-0 p-0">
-        <legend class="mb-3 p-0 font-semibold">Marca</legend>
-        <div class="chip-row -mx-6 flex gap-2 overflow-x-auto px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0" data-group="marca">
+        <legend class="mb-[clamp(6px,1.2vh,12px)] p-0 font-semibold">Marca</legend>
+        <div class="chip-row fila-baja -mx-6 flex gap-2 overflow-x-auto px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0" data-group="marca">
           {MARCAS.map((m) => <button type="button" class="chip-dark" data-value={m} aria-pressed={m === 'Mazda' ? 'true' : 'false'}>{m}</button>)}
         </div>
       </fieldset>
       <fieldset class="m-0 min-w-0 border-0 p-0">
-        <legend class="mb-3 p-0 font-semibold">Modelo (año)</legend>
+        <legend class="mb-[clamp(6px,1.2vh,12px)] p-0 font-semibold">Modelo (año)</legend>
         <div class="chip-row -mx-6 flex gap-2 overflow-x-auto px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0" data-group="anio">
           {ANIOS.map((a) => <button type="button" class="chip-dark" data-value={a} aria-pressed={a === '2017 a 2020' ? 'true' : 'false'}>{a}</button>)}
         </div>
       </fieldset>
       <fieldset class="m-0 min-w-0 border-0 p-0">
-        <legend class="mb-3 p-0 font-semibold">Servicio</legend>
+        <legend class="mb-[clamp(6px,1.2vh,12px)] p-0 font-semibold">Servicio</legend>
         <div class="flex flex-wrap gap-2" data-group="serv">
           {SERVICIOS.map((s) => <button type="button" class="chip-dark" data-value={s.id} aria-pressed={s.id === 'Frenos' ? 'true' : 'false'}>{s.id}</button>)}
         </div>
@@ -38,12 +38,12 @@ const ini = servs.find((s) => s.id === 'Frenos')!;
         <img data-q-img src={`/img/${ini.img}.jpg`} alt={ini.alt} width="800" height="993" loading="lazy"
           class="block aspect-[16/10] w-full object-cover transition-opacity duration-300" />
       </picture>
-      <div aria-live="polite" class="flex flex-wrap items-end justify-between gap-5 border-t-2 border-white/20 pt-6">
+      <div aria-live="polite" class="flex flex-wrap items-end justify-between gap-5 border-t-2 border-white/20 pt-[clamp(12px,2.4vh,24px)]">
         <div class="flex flex-col gap-1.5">
           <span data-q-label class="text-base text-humo"></span>
-          <span data-q-range class="font-display text-[clamp(40px,5vw,60px)] leading-none font-extrabold text-placa"></span>
+          <span data-q-range class="font-display text-[clamp(36px,min(5vw,7vh),60px)] leading-none font-extrabold text-placa"></span>
           <span data-q-incl class="max-w-[30em] text-base leading-snug text-white"></span>
-          <span data-q-note class="max-w-[30em] text-[15px] leading-snug text-humo"></span>
+          <span data-q-note class="solo-alto max-w-[30em] text-[15px] leading-snug text-humo"></span>
         </div>
         <a href="#agendar" data-q-book class="btn-placa btn-big">Agendar este servicio</a>
       </div>

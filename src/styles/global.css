@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant desk (@media (min-width: 900px));
 
 @theme {
   --color-placa: #F4C400;
@@ -27,8 +28,10 @@
 }
 
 @utility wrap { @apply mx-auto w-full max-w-[1200px] px-6; }
-@utility h2 { @apply font-display font-extrabold leading-none tracking-[-0.5px] text-[clamp(40px,4.6vw,64px)]; }
-@utility lead { @apply text-lg leading-relaxed; }
+@utility h2 { @apply font-display font-extrabold leading-none tracking-[-0.5px] text-[clamp(32px,min(4.6vw,7.5vh),64px)]; }
+@utility lead { @apply text-[clamp(16px,2.4vh,18px)] leading-relaxed; }
+@utility py-sec { padding-block: clamp(16px, 5vh, 88px); }
+@utility pantalla { @media (min-width: 900px) { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; } }
 @utility btn { @apply inline-flex min-h-12 items-center justify-center rounded-lg px-6 py-3 font-semibold no-underline transition-colors; }
 @utility btn-placa { @apply btn bg-placa text-tinta hover:bg-[#ffd21a]; }
 @utility btn-overol { @apply btn bg-overol text-white hover:bg-tinta; }
@@ -61,5 +64,33 @@ details[open] .faq-sign { transform: rotate(45deg); }
 @media (prefers-reduced-motion: reduce) { .faq-sign, .chapter { transition: none; } }
 
 .chip-row { scrollbar-width: none; } .chip-row::-webkit-scrollbar { display: none; } .chip-row > button { flex: none; }
+/* Computador con pantalla baja: todo más compacto para que cada sección quepa */
+@media (min-width: 900px) and (max-height: 820px) {
+  .gap-chips { gap: 6px; }
+  .chip-dark, .chip-light { min-height: 36px; padding: 4px 14px; font-size: 15px; }
+  .solo-alto { display: none; }
+}
+/* Ventanas muy bajas: las opciones pasan a una sola fila deslizable */
+@media (min-width: 900px) and (max-height: 700px) {
+  .fila-baja { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; padding-right: 32px;
+    -webkit-mask-image: linear-gradient(to right, #000 88%, transparent); mask-image: linear-gradient(to right, #000 88%, transparent); }
+  .fila-baja::-webkit-scrollbar { display: none; }
+  .fila-baja > button { flex: none; }
+  .solo-muy-alto { display: none; }
+}
 .wa-float { display: none; }
-@media (max-width: 760px) { .wa-float { display: flex; } body { padding-bottom: 80px; } body.sin-barra .wa-float { display: none; } body.sin-barra { padding-bottom: 0; } }
+@media (max-width: 760px) { .wa-float { display: flex; } body { padding-bottom: 80px; } body.sin-barra /* Computador con pantalla baja: todo más compacto para que cada sección quepa */
+@media (min-width: 900px) and (max-height: 820px) {
+  .gap-chips { gap: 6px; }
+  .chip-dark, .chip-light { min-height: 36px; padding: 4px 14px; font-size: 15px; }
+  .solo-alto { display: none; }
+}
+/* Ventanas muy bajas: las opciones pasan a una sola fila deslizable */
+@media (min-width: 900px) and (max-height: 700px) {
+  .fila-baja { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; padding-right: 32px;
+    -webkit-mask-image: linear-gradient(to right, #000 88%, transparent); mask-image: linear-gradient(to right, #000 88%, transparent); }
+  .fila-baja::-webkit-scrollbar { display: none; }
+  .fila-baja > button { flex: none; }
+  .solo-muy-alto { display: none; }
+}
+.wa-float { display: none; } body.sin-barra { padding-bottom: 0; } }

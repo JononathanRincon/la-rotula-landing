@@ -43,8 +43,8 @@ const marcas = ['Chevrolet', 'Renault', 'Mazda', 'Kia', 'Hyundai', 'Toyota', 'Ni
       </div>
     </section>
 
-    <section id="resenas" class="bg-white">
-      <div class="wrap pt-22 pb-18">
+    <section id="resenas" class="pantalla bg-white">
+      <div class="wrap py-sec">
         <div class="mb-9 flex flex-wrap items-end justify-between gap-4">
           <h2 class="h2 m-0 text-overol">Lo que dicen en Google</h2>
           {TALLER.demo && <p class="m-0 rounded bg-[#FFF4C2] px-2.5 py-1.5 text-sm text-[#6B5300]">Reseñas de ejemplo.</p>}
@@ -65,30 +65,30 @@ const marcas = ['Chevrolet', 'Renault', 'Mazda', 'Kia', 'Hyundai', 'Toyota', 'Ni
 
     <Agendador />
 
-    <section id="como-trabajamos" class="bg-concreto">
-      <div class="wrap flex flex-wrap gap-14 py-24">
+    <section id="como-trabajamos" class="pantalla bg-concreto">
+      <div class="wrap flex flex-wrap gap-x-10 gap-y-12 py-sec desk:flex-nowrap">
         <div class="min-w-0 flex-[999_1_560px]">
-          <h2 class="h2 m-0 mb-8 text-overol">Así pasa tu carro por el taller</h2>
-          <picture>
+          <h2 class="h2 m-0 mb-[clamp(16px,3vh,32px)] text-overol">Así pasa tu carro por el taller</h2>
+          <picture class="solo-alto">
             <source srcset="/img/diagnostico.webp" type="image/webp" />
-            <img src="/img/diagnostico.jpg" alt="Mecánica conectando el escáner de diagnóstico al carro por la puerta del conductor" loading="lazy" class="mb-12 block aspect-[16/7] w-full rounded-[10px] object-cover" />
+            <img src="/img/diagnostico.jpg" alt="Mecánica conectando el escáner de diagnóstico al carro por la puerta del conductor" loading="lazy" class="mb-10 block aspect-[16/7] w-full rounded-[10px] object-cover" />
           </picture>
-          <ol class="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-x-8 gap-y-10 p-0">
+          <ol class="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-x-8 gap-y-[clamp(20px,4vh,40px)] p-0">
             {PASOS.map((p, i) => (
-              <li class="flex flex-col gap-3 border-t-4 border-overol pt-5">
-                <span aria-hidden="true" class="font-display text-[56px] leading-none font-extrabold text-overol">{i + 1}</span>
-                <h3 class="m-0 font-display text-[26px] leading-tight font-bold">{p.titulo}</h3>
-                <p class="m-0 text-[17px] leading-relaxed text-[#2C3547]">{p.texto}</p>
+              <li class="flex flex-col gap-2 border-t-4 border-overol pt-[clamp(10px,2vh,20px)]">
+                <span aria-hidden="true" class="font-display text-[clamp(36px,6vh,56px)] leading-none font-extrabold text-overol">{i + 1}</span>
+                <h3 class="m-0 font-display text-[clamp(21px,3.4vh,26px)] leading-tight font-bold">{p.titulo}</h3>
+                <p class="m-0 text-[clamp(15px,2.3vh,17px)] leading-snug text-[#2C3547]">{p.texto}</p>
               </li>
             ))}
           </ol>
         </div>
-        <figure class="m-0 flex max-w-[400px] flex-[1_1_320px] flex-col gap-3">
+        <figure class="m-0 flex max-w-[400px] flex-[1_1_300px] flex-col gap-3 desk:max-w-[340px]">
           <div class="flex flex-col gap-2.5 rounded-2xl border border-[#CFC8BF] bg-[#ECE5DD] p-4.5">
             <div class="max-w-[92%] self-start rounded-[10px] bg-white px-3 py-2.5 text-[15px] leading-snug text-[#111B21]">
               <picture>
                 <source srcset="/img/pastillas.webp" type="image/webp" />
-                <img src="/img/pastillas.jpg" alt="Pastilla de freno gastada junto a una nueva, frente al disco" loading="lazy" class="mb-2 block h-[170px] w-full rounded-md object-cover" />
+                <img src="/img/pastillas.jpg" alt="Pastilla de freno gastada junto a una nueva, frente al disco" loading="lazy" class="mb-2 block h-[clamp(110px,22vh,170px)] w-full rounded-md object-cover" />
               </picture>
               Placa KXL 482. Las pastillas delanteras están en 2 mm y el disco izquierdo tiene canal. Recomendamos cambiar pastillas y rectificar discos.
             </div>
@@ -97,13 +97,13 @@ const marcas = ['Chevrolet', 'Renault', 'Mazda', 'Kia', 'Hyundai', 'Toyota', 'Ni
             </div>
             <div class="self-end rounded-[10px] bg-[#D9FDD3] px-3 py-2.5 text-[15px] text-[#111B21]">Dale, háganle.</div>
           </div>
-          <figcaption class="text-[15px] text-gris">Así se ve el reporte que te llega antes de empezar. Ejemplo con datos ficticios.</figcaption>
+          <figcaption class="solo-muy-alto text-[15px] text-gris">Así se ve el reporte que te llega antes de empezar. Ejemplo con datos ficticios.</figcaption>
         </figure>
       </div>
     </section>
 
     <section class="bg-placa text-tinta">
-      <div class="wrap flex flex-wrap items-center gap-x-16 gap-y-10 py-20">
+      <div class="wrap flex flex-wrap items-center gap-x-16 gap-y-10 py-sec">
         <div class="flex min-w-0 flex-[1_1_440px] flex-col gap-7">
           <p class="m-0 font-display text-[clamp(36px,4.4vw,60px)] leading-[1.02] font-extrabold tracking-[-0.5px]">Te entregamos en una bolsa las piezas que cambiamos. Así ves que el cambio fue real.</p>
           <div class="flex flex-col gap-2.5 text-lg leading-relaxed">
@@ -120,16 +120,16 @@ const marcas = ['Chevrolet', 'Renault', 'Mazda', 'Kia', 'Hyundai', 'Toyota', 'Ni
 
     {ANTES_DESPUES.length > 0 && <AntesDespues pares={ANTES_DESPUES} />}
 
-    <section class="bg-white">
-      <div class="wrap py-24">
+    <section class="pantalla bg-white">
+      <div class="wrap py-sec">
         <h2 class="h2 m-0 mb-4 text-overol">Quién le mete la mano a tu carro</h2>
-        <p class="m-0 mb-10 max-w-[40em] text-lg leading-relaxed text-[#2C3547]">El mismo equipo desde 2014, en el mismo local de {TALLER.barrio}.</p>
+        <p class="m-0 mb-[clamp(16px,4vh,40px)] max-w-[40em] text-lg leading-relaxed text-[#2C3547]">El mismo equipo desde 2014, en el mismo local de {TALLER.barrio}.</p>
         <div class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-8">
           {EQUIPO.map((m) => (
             <div class="flex flex-col gap-2.5">
               <picture>
                 <source srcset={`/img/${m.img}.webp`} type="image/webp" />
-                <img src={`/img/${m.img}.jpg`} alt={m.alt} loading="lazy" class="block aspect-[4/5] w-full rounded-[10px] object-cover" />
+                <img src={`/img/${m.img}.jpg`} alt={m.alt} loading="lazy" class="block aspect-[4/5] w-full rounded-[10px] object-cover desk:aspect-auto desk:h-[clamp(180px,40vh,440px)]" />
               </picture>
               <span class="font-display text-2xl font-bold">{m.nombre}</span>
               <span class="text-base leading-snug text-gris">{m.rol}</span>
@@ -140,7 +140,7 @@ const marcas = ['Chevrolet', 'Renault', 'Mazda', 'Kia', 'Hyundai', 'Toyota', 'Ni
     </section>
 
     <section class="bg-overol text-white">
-      <div class="wrap flex flex-wrap gap-x-16 gap-y-10 py-22">
+      <div class="wrap flex flex-wrap gap-x-16 gap-y-10 py-sec">
         <div class="flex min-w-0 flex-[1_1_420px] flex-col gap-4.5">
           <h2 class="h2 m-0">No tienes que venir. Vamos por él.</h2>
           <p class="lead m-0 max-w-[32em] text-[#D6DBE6]">Lo recogemos en tu casa u oficina y te lo devolvemos listo. Cuesta $25.000 ida y vuelta, y es gratis en reparaciones de más de $500.000.</p>
@@ -156,13 +156,13 @@ const marcas = ['Chevrolet', 'Renault', 'Mazda', 'Kia', 'Hyundai', 'Toyota', 'Ni
 
     <MiCarro />
 
-    <section id="preguntas" class="bg-white">
-      <div class="mx-auto max-w-[860px] px-6 py-24">
-        <h2 class="h2 m-0 mb-8 text-overol">Lo que siempre nos preguntan</h2>
+    <section id="preguntas" class="pantalla bg-white">
+      <div class="mx-auto w-full max-w-[860px] px-6 py-sec">
+        <h2 class="h2 m-0 mb-[clamp(16px,3vh,32px)] text-overol">Lo que siempre nos preguntan</h2>
         <div class="border-t-4 border-overol">
           {FAQ.map((f) => (
             <details class="border-b border-gris-claro">
-              <summary class="flex min-h-11 items-center justify-between gap-4 py-5.5 font-display text-2xl font-bold">
+              <summary class="flex min-h-11 items-center justify-between gap-4 py-[clamp(10px,2.2vh,22px)] font-display text-[clamp(19px,3vh,24px)] font-bold">
                 <span>{f.q}</span><span class="faq-sign text-[30px] leading-none text-overol" aria-hidden="true">+</span>
               </summary>
               <p class="m-0 mb-5.5 max-w-[40em] text-[17px] leading-relaxed text-[#2C3547]">{f.a}</p>
@@ -173,8 +173,8 @@ const marcas = ['Chevrolet', 'Renault', 'Mazda', 'Kia', 'Hyundai', 'Toyota', 'Ni
       </div>
     </section>
 
-    <section id="visitanos" class="bg-concreto">
-      <div class="wrap flex flex-wrap gap-12 py-24">
+    <section id="visitanos" class="pantalla bg-concreto">
+      <div class="wrap flex flex-wrap gap-12 py-sec">
         <div class="flex min-w-0 flex-[1_1_360px] flex-col gap-7">
           <h2 class="h2 m-0 text-overol">Dónde estamos</h2>
           <dl class="m-0 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-3.5 text-lg leading-snug">

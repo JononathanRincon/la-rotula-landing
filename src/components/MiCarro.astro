@@ -1,10 +1,10 @@
 ---
 import { ETAPAS } from '../config';
 ---
-<section id="mi-carro" class="bg-concreto" data-micarro data-etapas={JSON.stringify(ETAPAS)}>
-  <div class="wrap flex flex-wrap gap-14 py-24">
-    <div class="flex min-w-0 flex-[1_1_440px] flex-col gap-4.5">
-      <h2 class="m-0 font-display text-[clamp(40px,4.6vw,60px)] leading-none font-extrabold tracking-[-0.5px] text-overol">¿Cómo va mi carro?</h2>
+<section id="mi-carro" class="pantalla bg-concreto" data-micarro data-etapas={JSON.stringify(ETAPAS)}>
+  <div class="wrap flex flex-wrap gap-14 py-sec">
+    <div class="flex min-w-0 flex-[1_1_440px] flex-col gap-[clamp(10px,2vh,18px)]">
+      <h2 class="m-0 font-display text-[clamp(32px,min(4.6vw,7vh),60px)] leading-none font-extrabold tracking-[-0.5px] text-overol">¿Cómo va mi carro?</h2>
       <p class="lead m-0 text-[#2C3547]">Escribe la placa y mira en qué va. Lo actualizamos en cada paso.</p>
       <form data-track-form aria-label="Consultar estado del carro" class="flex flex-wrap items-end gap-2.5" novalidate>
         <div class="flex flex-[1_1_180px] flex-col gap-1.5">
@@ -18,8 +18,8 @@ import { ETAPAS } from '../config';
       <div aria-live="polite" data-track-out></div>
     </div>
 
-    <div class="flex min-w-0 flex-[1_1_380px] flex-col gap-4.5">
-      <h2 class="m-0 font-display text-[clamp(40px,4.6vw,60px)] leading-none font-extrabold tracking-[-0.5px] text-overol">Te avisamos antes de que se venza</h2>
+    <div class="flex min-w-0 flex-[1_1_380px] flex-col gap-[clamp(10px,2vh,18px)]">
+      <h2 class="m-0 font-display text-[clamp(32px,min(4.6vw,7vh),60px)] leading-none font-extrabold tracking-[-0.5px] text-overol">Te avisamos antes de que se venza</h2>
       <p class="lead m-0 text-[#2C3547]">Deja tu placa y la fecha. Un mes antes te escribimos por WhatsApp para que no te pongan un comparendo.</p>
       <form data-rem-form aria-label="Recordatorio de vencimiento" class="flex flex-col gap-4" novalidate>
         <fieldset class="m-0 border-0 p-0">

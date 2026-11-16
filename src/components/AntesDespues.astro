@@ -2,8 +2,8 @@
 interface Props { pares: { titulo: string; antes: string; despues: string; texto: string }[] }
 const { pares } = Astro.props;
 ---
-<section class="bg-tinta text-white" data-ba data-pares={JSON.stringify(pares)}>
-  <div class="wrap flex flex-wrap items-center gap-12 py-24">
+<section class="pantalla bg-tinta text-white" data-ba data-pares={JSON.stringify(pares)}>
+  <div class="wrap flex flex-wrap items-center gap-12 py-sec">
     <div class="flex min-w-0 flex-[1_1_300px] flex-col gap-4">
       <h2 class="h2 m-0">Antes y después</h2>
       <p data-ba-text class="lead m-0 text-[#D6DBE6]">{pares[0].texto}</p>
@@ -12,7 +12,7 @@ const { pares } = Astro.props;
       </div>
     </div>
     <div class="flex min-w-0 flex-[2_1_560px] flex-col gap-3.5">
-      <div class="relative aspect-[16/10] w-full overflow-hidden rounded-[10px] bg-overol">
+      <div class="relative aspect-[16/10] w-full overflow-hidden rounded-[10px] bg-overol desk:aspect-auto desk:h-[clamp(260px,58vh,520px)]">
         <img data-ba-after src={`/img/${pares[0].despues}.jpg`} alt="Después de la reparación" class="absolute inset-0 h-full w-full object-cover" />
         <img data-ba-before src={`/img/${pares[0].antes}.jpg`} alt="Antes de la reparación" class="absolute inset-0 h-full w-full object-cover" style="clip-path: inset(0 50% 0 0)" />
         <div data-ba-line aria-hidden="true" class="absolute inset-y-0 left-1/2 -ml-px w-[3px] bg-placa"></div>

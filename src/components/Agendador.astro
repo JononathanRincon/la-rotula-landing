@@ -2,10 +2,10 @@
 const servicios = ['Diagnóstico', 'Frenos', 'Cambio de aceite', 'Suspensión', 'Sistema eléctrico', 'Revisión técnico-mecánica', 'No sé qué tiene'];
 const pasos = ['Servicio', 'Día', 'Hora', 'Tus datos'];
 ---
-<section id="agendar" class="bg-white" data-agendador>
-  <div class="mx-auto max-w-[960px] px-6 py-24">
+<section id="agendar" class="pantalla bg-white" data-agendador>
+  <div class="mx-auto w-full max-w-[960px] px-6 py-sec">
     <h2 class="h2 m-0 mb-3 text-overol">Aparta día y hora</h2>
-    <p class="lead m-0 mb-9 text-[#2C3547]">Cuatro pasos y listo. Te confirmamos por WhatsApp.</p>
+    <p class="lead m-0 mb-[clamp(16px,3.5vh,36px)] text-[#2C3547]">Cuatro pasos y listo. Te confirmamos por WhatsApp.</p>
 
     <ol aria-label="Pasos para agendar" class="m-0 mb-6 grid list-none grid-cols-4 gap-2 p-0" data-steps>
       {pasos.map((p, i) => (
