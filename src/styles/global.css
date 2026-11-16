@@ -89,18 +89,9 @@ details[open] .faq-sign { transform: rotate(45deg); }
 .menu-movil > summary { list-style: none; }
 .menu-movil > summary::-webkit-details-marker { display: none; }
 .wa-float { display: none; }
-@media (max-width: 760px) { .wa-float { display: flex; } body { padding-bottom: 80px; } body.sin-barra /* Computador con pantalla baja: todo más compacto para que cada sección quepa */
-@media (min-width: 900px) and (max-height: 820px) {
-  .gap-chips { gap: 6px; }
-  .chip-dark, .chip-light { min-height: 36px; padding: 4px 14px; font-size: 15px; }
-  .solo-alto { display: none; }
+@media (max-width: 760px) {
+  .wa-float { display: flex; }
+  body { padding-bottom: 80px; }
+  body.sin-barra .wa-float { display: none; }
+  body.sin-barra { padding-bottom: 0; }
 }
-/* Ventanas muy bajas: las opciones pasan a una sola fila deslizable */
-@media (min-width: 900px) and (max-height: 700px) {
-  .fila-baja { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; padding-right: 32px;
-    -webkit-mask-image: linear-gradient(to right, #000 88%, transparent); mask-image: linear-gradient(to right, #000 88%, transparent); }
-  .fila-baja::-webkit-scrollbar { display: none; }
-  .fila-baja > button { flex: none; }
-  .solo-muy-alto { display: none; }
-}
-.wa-float { display: none; } body.sin-barra { padding-bottom: 0; } }
