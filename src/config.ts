@@ -18,12 +18,12 @@ export const TALLER = {
 export const WHATSAPP = (import.meta.env.PUBLIC_WHATSAPP || '570000000000').replace(/\D/g, '');
 
 export const SERVICIOS = [
-  { id: 'Diagnóstico', nombre: 'Diagnóstico', desc: 'Escáner computarizado, revisión visual y reporte con fotos por WhatsApp. Gratis si reparas con nosotros.', tiempo: '1 hora', base: 60000, fijo: true },
-  { id: 'Frenos', nombre: 'Frenos', desc: 'Cambio de pastillas o bandas, rectificado de discos y purga del líquido.', tiempo: '2 a 3 horas', base: 180000 },
-  { id: 'Cambio de aceite', nombre: 'Aceite y filtros', desc: 'Aceite según el manual de tu carro, filtro de aceite y revisión de 20 puntos.', tiempo: '45 minutos', base: 150000 },
-  { id: 'Suspensión', nombre: 'Suspensión', desc: 'Amortiguadores, tijeras, bujes y terminales. Alineación incluida.', tiempo: 'Medio día', base: 350000 },
-  { id: 'Sistema eléctrico', nombre: 'Sistema eléctrico', desc: 'Batería, alternador, arranque, luces y testigos encendidos en el tablero.', tiempo: 'Según el caso', base: 90000 },
-  { id: 'Revisión técnico-mecánica', nombre: 'Pre-revisión RTM', desc: 'Revisamos lo que evalúa el CDA para que pases la técnico-mecánica a la primera.', tiempo: '1 hora', base: 70000, fijo: true },
+  { id: 'Diagnóstico', img: 'servicio-diagnostico', alt: 'Diana conectando el escáner de diagnóstico con el capó abierto', nombre: 'Diagnóstico', desc: 'Escáner computarizado, revisión visual y reporte con fotos por WhatsApp. Gratis si reparas con nosotros.', tiempo: '1 hora', base: 60000, fijo: true },
+  { id: 'Frenos', img: 'servicio-frenos', alt: 'Instalación de un disco de freno rectificado y pastillas nuevas', nombre: 'Frenos', desc: 'Cambio de pastillas o bandas, rectificado de discos y purga del líquido.', tiempo: '2 a 3 horas', base: 180000 },
+  { id: 'Cambio de aceite', img: 'servicio-aceite', alt: 'Hernán echando aceite nuevo al motor con un embudo', nombre: 'Aceite y filtros', desc: 'Aceite según el manual de tu carro, filtro de aceite y revisión de 20 puntos.', tiempo: '45 minutos', base: 150000 },
+  { id: 'Suspensión', img: 'servicio-suspension', alt: 'Amortiguador viejo con fuga junto a uno nuevo sobre el banco', nombre: 'Suspensión', desc: 'Amortiguadores, tijeras, bujes y terminales. Alineación incluida.', tiempo: 'Medio día', base: 350000 },
+  { id: 'Sistema eléctrico', img: 'servicio-electrico', alt: 'Diana midiendo la batería con un multímetro', nombre: 'Sistema eléctrico', desc: 'Batería, alternador, arranque, luces y testigos encendidos en el tablero.', tiempo: 'Según el caso', base: 90000 },
+  { id: 'Revisión técnico-mecánica', img: 'servicio-rtm', alt: 'Julián revisando las luces del carro con una lista de chequeo', nombre: 'Pre-revisión RTM', desc: 'Revisamos lo que evalúa el CDA para que pases la técnico-mecánica a la primera.', tiempo: '1 hora', base: 70000, fijo: true },
 ] as const;
 
 export const MARCAS = ['Chevrolet', 'Renault', 'Mazda', 'Kia', 'Hyundai', 'Toyota', 'Nissan', 'Suzuki', 'Volkswagen', 'Otra'];

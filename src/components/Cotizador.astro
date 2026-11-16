@@ -1,12 +1,18 @@
 ---
 import { MARCAS, ANIOS, SERVICIOS } from '../config';
-const servs = SERVICIOS.map((s) => ({ id: s.id, base: s.base, fijo: 'fijo' in s ? s.fijo : false, desc: s.desc, tiempo: s.tiempo }));
+const servs = SERVICIOS.map((s) => ({ id: s.id, base: s.base, fijo: 'fijo' in s ? s.fijo : false, desc: s.desc, tiempo: s.tiempo, img: s.img, alt: s.alt }));
+const ini = servs.find((s) => s.id === 'Frenos')!;
 ---
 <section id="cotizar" class="bg-overol text-white" data-cotizador data-servs={JSON.stringify(servs)}>
   <div class="wrap flex flex-wrap gap-12 py-22">
     <div class="flex min-w-0 flex-[1_1_320px] flex-col gap-4">
       <h2 class="h2 m-0">¿Cuánto me cuesta?</h2>
       <p class="lead m-0 max-w-[26em] text-[#D6DBE6]">Elige tu carro y el servicio. Te damos un rango de referencia; el valor exacto sale del diagnóstico y lo apruebas antes de empezar.</p>
+      <picture class="mt-4 hidden overflow-hidden rounded-xl bg-overol-osc md:block">
+        <source data-q-src srcset={`/img/${ini.img}.webp`} type="image/webp" />
+        <img data-q-img src={`/img/${ini.img}.jpg`} alt={ini.alt} width="800" height="993" loading="lazy"
+          class="block aspect-[4/5] w-full object-cover transition-opacity duration-300" />
+      </picture>
     </div>
     <div class="flex min-w-0 flex-[2_1_560px] flex-col gap-7">
       <fieldset class="m-0 min-w-0 border-0 p-0">
@@ -27,6 +33,11 @@ const servs = SERVICIOS.map((s) => ({ id: s.id, base: s.base, fijo: 'fijo' in s 
           {SERVICIOS.map((s) => <button type="button" class="chip-dark" data-value={s.id} aria-pressed={s.id === 'Frenos' ? 'true' : 'false'}>{s.id}</button>)}
         </div>
       </fieldset>
+      <picture class="block overflow-hidden rounded-xl bg-overol-osc md:hidden">
+        <source data-q-src srcset={`/img/${ini.img}.webp`} type="image/webp" />
+        <img data-q-img src={`/img/${ini.img}.jpg`} alt={ini.alt} width="800" height="993" loading="lazy"
+          class="block aspect-[16/10] w-full object-cover transition-opacity duration-300" />
+      </picture>
       <div aria-live="polite" class="flex flex-wrap items-end justify-between gap-5 border-t-2 border-white/20 pt-6">
         <div class="flex flex-col gap-1.5">
           <span data-q-label class="text-base text-humo"></span>
@@ -43,7 +54,7 @@ const servs = SERVICIOS.map((s) => ({ id: s.id, base: s.base, fijo: 'fijo' in s 
 <script>
   import { chipGroup, pesos } from '../scripts/lib';
   const root = document.querySelector('[data-cotizador]') as HTMLElement;
-  const servs: { id: string; base: number; fijo: boolean; desc: string; tiempo: string }[] = JSON.parse(root.dataset.servs!);
+  const servs: { id: string; base: number; fijo: boolean; desc: string; tiempo: string; img: string; alt: string }[] = JSON.parse(root.dataset.servs!);
   const sel = { marca: 'Mazda', anio: '2017 a 2020', serv: 'Frenos' };
   const $ = (s: string) => root.querySelector(s) as HTMLElement;
 
@@ -54,6 +65,7 @@ const servs = SERVICIOS.map((s) => ({ id: s.id, base: s.base, fijo: 'fijo' in s 
     const f = fMarca * fAnio;
     $('[data-q-label]').textContent = `${sel.serv} para ${sel.marca === 'Otra' ? 'tu carro' : sel.marca}, ${sel.anio.toLowerCase()}`;
     $('[data-q-range]').textContent = s.fijo ? pesos(s.base) : `${pesos(s.base * f * 0.9)} a ${pesos(s.base * f * 1.35)}`;
+    swapImage();
     $('[data-q-incl]').textContent = `${s.desc.replace(/ Gratis si reparas con nosotros\.$/, '')} Tiempo: ${s.tiempo.toLowerCase()}.`;
     $('[data-q-note]').textContent = sel.serv === 'Diagnóstico' ? 'Gratis si agendas desde esta página y haces la reparación con nosotros.'
       : s.fijo ? 'Precio fijo para cualquier carro particular.'
@@ -64,6 +76,30 @@ const servs = SERVICIOS.map((s) => ({ id: s.id, base: s.base, fijo: 'fijo' in s 
     btn.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
     render();
   }));
+  // Imagen del servicio: fundido corto al cambiar
+  const imgs = Array.from(root.querySelectorAll<HTMLImageElement>('[data-q-img]'));
+  const sources = Array.from(root.querySelectorAll<HTMLSourceElement>('[data-q-src]'));
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let shown = 'Frenos';
+  function swapImage() {
+    if (sel.serv === shown) return;
+    shown = sel.serv;
+    const s = servs.find((x) => x.id === sel.serv)!;
+    const apply = () => {
+      sources.forEach((x) => (x.srcset = `/img/${s.img}.webp`));
+      imgs.forEach((i) => { i.onload = () => (i.style.opacity = '1'); i.src = `/img/${s.img}.jpg`; i.alt = s.alt; if (i.complete) i.style.opacity = '1'; });
+    };
+    if (reduce) return apply();
+    imgs.forEach((i) => (i.style.opacity = '0'));
+    setTimeout(apply, 180);
+  }
+  // Precarga las demás imágenes cuando la sección se acerca
+  new IntersectionObserver((es, o) => {
+    if (!es[0].isIntersecting) return;
+    servs.forEach((s) => { const i = new Image(); i.src = `/img/${s.img}.jpg`; });
+    o.disconnect();
+  }, { rootMargin: '400px' }).observe(root);
+
   $('[data-q-book]').addEventListener('click', () => {
     document.dispatchEvent(new CustomEvent('agendar:servicio', { detail: sel.serv }));
   });
