@@ -38,30 +38,38 @@ const ini = servs.find((s) => s.id === 'Frenos')!;
           ))}
         </div>
       </fieldset>
-      <div aria-live="polite" class="flex flex-wrap items-end justify-between gap-5 border-t-2 border-white/20 pt-[clamp(12px,2.4vh,24px)] movil:gap-4 movil:rounded-xl movil:border-0 movil:bg-overol-osc movil:p-3.5">
+      <div data-q-card class="flex flex-wrap items-end justify-between gap-5 border-t-2 border-white/20 pt-[clamp(12px,2.4vh,24px)] movil:gap-4 movil:rounded-xl movil:border-0 movil:bg-overol-osc movil:p-3.5">
         <div class="flex min-w-0 flex-col gap-1.5 movil:grid movil:w-full movil:grid-cols-[92px_1fr] movil:gap-x-3.5 movil:gap-y-1">
-          <picture class="row-span-4 block overflow-hidden rounded-lg bg-overol md:hidden">
+          <picture class="row-span-4 block self-start overflow-hidden rounded-lg bg-overol md:hidden">
             <source data-q-src srcset={`/img/${ini.img}.webp`} type="image/webp" />
             <img data-q-img src={`/img/${ini.img}.jpg`} alt={ini.alt} width="800" height="993" loading="lazy"
               class="block h-[115px] w-[92px] object-cover transition-opacity duration-300" />
           </picture>
           <span data-q-label class="text-base text-humo movil:text-sm"></span>
-          <span data-q-range class="font-display text-[clamp(36px,min(5vw,7vh),60px)] leading-none font-extrabold text-placa movil:text-[28px]"></span>
+          <span data-q-range aria-hidden="true" class="tabular-nums font-display text-[clamp(36px,min(5vw,7vh),60px)] leading-none font-extrabold text-placa movil:text-[clamp(21px,6.4vw,26px)] movil:whitespace-nowrap"></span>
+          <span data-q-sr class="sr-only" aria-live="polite"></span>
           <span data-q-incl class="max-w-[30em] text-base leading-snug text-white movil:text-sm"></span>
           <span data-q-note class="solo-alto max-w-[30em] text-[15px] leading-snug text-humo movil:hidden"></span>
         </div>
-        <a href="#agendar" data-q-book class="btn-placa btn-big movil:w-full movil:text-xl">Agendar este servicio</a>
+        <div class="flex flex-col items-start gap-2 movil:w-full movil:items-stretch">
+          <a href="#agendar" data-q-book class="btn-placa btn-big movil:w-full movil:text-xl">Agendar este servicio</a>
+          <a href="#" data-q-wa data-cta="cotizador" target="_blank" rel="noopener" class="inline-flex min-h-11 items-center justify-center gap-2 font-semibold text-white underline-offset-4 hover:underline">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.5A8.4 8.4 0 1 1 21 11.5z"/></svg>
+            Preguntar por este precio
+          </a>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <script>
-  import { chipGroup, pesos } from '../scripts/lib';
+  import { chipGroup, pesos, waLink } from '../scripts/lib';
   const root = document.querySelector('[data-cotizador]') as HTMLElement;
   const servs: { id: string; base: number; fijo: boolean; desc: string; tiempo: string; img: string; alt: string }[] = JSON.parse(root.dataset.servs!);
   const sel = { marca: 'Mazda', anio: '2017 a 2020', serv: 'Frenos' };
   const $ = (s: string) => root.querySelector(s) as HTMLElement;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function render() {
     const s = servs.find((x) => x.id === sel.serv)!;
@@ -69,22 +77,57 @@ const ini = servs.find((s) => s.id === 'Frenos')!;
     const fAnio = ({ 'Antes de 2012': 1.12, '2012 a 2016': 1, '2017 a 2020': 1, '2021 en adelante': 1.06 } as Record<string, number>)[sel.anio] ?? 1;
     const f = fMarca * fAnio;
     $('[data-q-label]').textContent = `${sel.serv} para ${sel.marca === 'Otra' ? 'tu carro' : sel.marca}, ${sel.anio.toLowerCase()}`;
-    $('[data-q-range]').textContent = s.fijo ? pesos(s.base) : `${pesos(s.base * f * 0.9)} a ${pesos(s.base * f * 1.35)}`;
+    const min = s.fijo ? s.base : s.base * f * 0.9;
+    const max = s.fijo ? s.base : s.base * f * 1.35;
+    animarPrecio(min, max, s.fijo);
+    const texto = s.fijo ? pesos(min) : `${pesos(min)} a ${pesos(max)}`;
+    $('[data-q-sr]').textContent = `${sel.serv}: ${texto}`;
+    const carro = sel.marca === 'Otra' ? 'mi carro' : `un ${sel.marca}`;
+    ($('[data-q-wa]') as HTMLAnchorElement).href = waLink(`Hola, coticé ${sel.serv.toLowerCase()} en la página para ${carro} modelo ${sel.anio.toLowerCase()} (${texto}). ¿Me confirman el precio y cuándo lo puedo llevar?`);
     swapImage();
     $('[data-q-incl]').textContent = `${s.desc.replace(/ Gratis si reparas con nosotros\.$/, '')} Tiempo: ${s.tiempo.toLowerCase()}.`;
     $('[data-q-note]').textContent = sel.serv === 'Diagnóstico' ? 'Gratis si agendas desde esta página y haces la reparación con nosotros.'
       : s.fijo ? 'Precio fijo para cualquier carro particular.'
       : 'Rango con repuestos homologados y mano de obra. Con repuestos originales de marca el valor sube.';
   }
+  // Precio que cuenta hasta el valor nuevo
+  let cur = { min: 0, max: 0 };
+  let raf = 0;
+  function animarPrecio(min: number, max: number, fijo: boolean) {
+    const el = $('[data-q-range]');
+    const from = { ...cur };
+    cur = { min, max };
+    const pinta = (a: number, b: number) => (el.textContent = fijo ? pesos(a) : `${pesos(a)} a ${pesos(b)}`);
+    cancelAnimationFrame(raf);
+    if (reduce || !from.max) return pinta(min, max);
+    const t0 = performance.now();
+    const paso = (t: number) => {
+      const k = Math.min(1, (t - t0) / 450);
+      const e = 1 - Math.pow(1 - k, 3);
+      pinta(from.min + (min - from.min) * e, from.max + (max - from.max) * e);
+      if (k < 1) raf = requestAnimationFrame(paso);
+    };
+    raf = requestAnimationFrame(paso);
+  }
+  // En celular: si el resultado queda tapado por la barra de WhatsApp, baja lo justo
+  const movil = window.matchMedia('(max-width: 899px)');
+  function mostrarResultado() {
+    if (!movil.matches) return;
+    const r = $('[data-q-card]').getBoundingClientRect();
+    const limite = window.innerHeight - 96;
+    if (r.bottom <= limite) return;
+    window.scrollBy({ top: Math.min(r.bottom - limite, r.top - 80), behavior: reduce ? 'auto' : 'smooth' });
+  }
   root.querySelectorAll('[data-group]').forEach((g) => chipGroup(g, (v, btn) => {
-    (sel as any)[(g as HTMLElement).dataset.group!] = v;
+    const grupo = (g as HTMLElement).dataset.group!;
+    (sel as any)[grupo] = v;
     btn.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
     render();
+    if (grupo === 'serv') setTimeout(mostrarResultado, 120);
   }));
   // Imagen del servicio: fundido corto al cambiar
   const imgs = Array.from(root.querySelectorAll<HTMLImageElement>('[data-q-img]'));
   const sources = Array.from(root.querySelectorAll<HTMLSourceElement>('[data-q-src]'));
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let shown = 'Frenos';
   function swapImage() {
     if (sel.serv === shown) return;
