@@ -52,7 +52,8 @@ export const RESENAS = [
 
 // Antes y después: la sección aparece solo cuando hay pares con las dos fotos (en public/img).
 export const ANTES_DESPUES: { titulo: string; antes: string; despues: string; texto: string }[] = [
-  // { titulo: 'Disco de freno', antes: 'freno', despues: 'despues-disco', texto: 'Disco con canal y pastillas en 2 mm. Listo en 2 horas y media.' },
+  { titulo: 'Disco de freno', antes: 'freno-antes', despues: 'freno-despues', texto: 'Disco con canal y pastillas en 2 mm. Rectificamos el disco y cambiamos las pastillas en 2 horas y media.' },
+  { titulo: 'Pastillas', antes: 'pastillas-antes', despues: 'pastillas-despues', texto: 'Así llegan las pastillas cuando el freno empieza a sonar, y así salen. Las viejas te las entregamos en una bolsa.' },
 ];
 
 export const FAQ = [

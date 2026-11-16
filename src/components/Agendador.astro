@@ -160,6 +160,7 @@ const pasos = ['Servicio', 'Día', 'Hora', 'Tus datos'];
     });
     const parts = [step > 1 ? st.serv : '', step > 2 ? fechaLarga(st.day) : '', step > 3 ? hora12(st.slot) : ''].filter(Boolean);
     q('[data-summary-row]').hidden = !(step > 1 && step < 5);
+    document.body.classList.toggle('sin-barra', step === 5 && confirmVisible);
     q('[data-summary]').textContent = 'Elegiste: ' + parts.join(', ');
   }
 
@@ -242,6 +243,13 @@ const pasos = ['Servicio', 'Día', 'Hora', 'Tus datos'];
     renderDays();
     go(2);
   }) as EventListener);
+
+  // La barra fija de WhatsApp se oculta solo mientras la confirmación está en pantalla
+  let confirmVisible = false;
+  new IntersectionObserver(([e]) => {
+    confirmVisible = e.isIntersecting;
+    document.body.classList.toggle('sin-barra', st.step === 5 && confirmVisible);
+  }, { threshold: 0.2 }).observe(q('[data-panel="5"]').parentElement!);
 
   loadTaken().then(renderDays);
   go(1);

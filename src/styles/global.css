@@ -60,5 +60,6 @@ details[open] .faq-sign { transform: rotate(45deg); }
 .faq-sign { transition: transform .2s; }
 @media (prefers-reduced-motion: reduce) { .faq-sign, .chapter { transition: none; } }
 
+.chip-row { scrollbar-width: none; } .chip-row::-webkit-scrollbar { display: none; } .chip-row > button { flex: none; }
 .wa-float { display: none; }
-@media (max-width: 760px) { .wa-float { display: flex; } body { padding-bottom: 80px; } }
+@media (max-width: 760px) { .wa-float { display: flex; } body { padding-bottom: 80px; } body.sin-barra .wa-float { display: none; } body.sin-barra { padding-bottom: 0; } }
