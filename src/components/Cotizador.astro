@@ -1,6 +1,6 @@
 ---
 import { MARCAS, ANIOS, SERVICIOS } from '../config';
-const servs = SERVICIOS.map((s) => ({ id: s.id, base: s.base, fijo: 'fijo' in s ? s.fijo : false }));
+const servs = SERVICIOS.map((s) => ({ id: s.id, base: s.base, fijo: 'fijo' in s ? s.fijo : false, desc: s.desc, tiempo: s.tiempo }));
 ---
 <section id="cotizar" class="bg-overol text-white" data-cotizador data-servs={JSON.stringify(servs)}>
   <div class="wrap flex flex-wrap gap-12 py-22">
@@ -31,6 +31,7 @@ const servs = SERVICIOS.map((s) => ({ id: s.id, base: s.base, fijo: 'fijo' in s 
         <div class="flex flex-col gap-1.5">
           <span data-q-label class="text-base text-humo"></span>
           <span data-q-range class="font-display text-[clamp(40px,5vw,60px)] leading-none font-extrabold text-placa"></span>
+          <span data-q-incl class="max-w-[30em] text-base leading-snug text-white"></span>
           <span data-q-note class="max-w-[30em] text-[15px] leading-snug text-humo"></span>
         </div>
         <a href="#agendar" data-q-book class="btn-placa btn-big">Agendar este servicio</a>
@@ -42,7 +43,7 @@ const servs = SERVICIOS.map((s) => ({ id: s.id, base: s.base, fijo: 'fijo' in s 
 <script>
   import { chipGroup, pesos } from '../scripts/lib';
   const root = document.querySelector('[data-cotizador]') as HTMLElement;
-  const servs: { id: string; base: number; fijo: boolean }[] = JSON.parse(root.dataset.servs!);
+  const servs: { id: string; base: number; fijo: boolean; desc: string; tiempo: string }[] = JSON.parse(root.dataset.servs!);
   const sel = { marca: 'Mazda', anio: '2017 a 2020', serv: 'Frenos' };
   const $ = (s: string) => root.querySelector(s) as HTMLElement;
 
@@ -53,6 +54,7 @@ const servs = SERVICIOS.map((s) => ({ id: s.id, base: s.base, fijo: 'fijo' in s 
     const f = fMarca * fAnio;
     $('[data-q-label]').textContent = `${sel.serv} para ${sel.marca === 'Otra' ? 'tu carro' : sel.marca}, ${sel.anio.toLowerCase()}`;
     $('[data-q-range]').textContent = s.fijo ? pesos(s.base) : `${pesos(s.base * f * 0.9)} a ${pesos(s.base * f * 1.35)}`;
+    $('[data-q-incl]').textContent = `${s.desc.replace(/ Gratis si reparas con nosotros\.$/, '')} Tiempo: ${s.tiempo.toLowerCase()}.`;
     $('[data-q-note]').textContent = sel.serv === 'Diagnóstico' ? 'Gratis si agendas desde esta página y haces la reparación con nosotros.'
       : s.fijo ? 'Precio fijo para cualquier carro particular.'
       : 'Rango con repuestos homologados y mano de obra. Con repuestos originales de marca el valor sube.';

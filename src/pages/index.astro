@@ -7,7 +7,6 @@ import Agendador from '../components/Agendador.astro';
 import MiCarro from '../components/MiCarro.astro';
 import AntesDespues from '../components/AntesDespues.astro';
 import { TALLER, SERVICIOS, PASOS, EQUIPO, RESENAS, FAQ, ANTES_DESPUES } from '../config';
-import { pesosServer } from '../scripts/format';
 
 const schema = {
   '@context': 'https://schema.org', '@type': 'AutoRepair', name: `${TALLER.nombre} ${TALLER.tipo}`,
@@ -63,56 +62,6 @@ const marcas = ['Chevrolet', 'Renault', 'Mazda', 'Kia', 'Hyundai', 'Toyota', 'Ni
     </section>
 
     <Cotizador />
-
-    <section id="servicios" class="bg-white">
-      <div class="wrap py-24">
-        <div class="mb-10 flex flex-wrap items-end justify-between gap-6">
-          <h2 class="h2 m-0 text-overol">Lo que arreglamos</h2>
-          <p class="m-0 max-w-[30em] text-[17px] leading-relaxed text-gris">Precios de referencia para carros particulares, con IVA. El valor final sale del diagnóstico y te lo mandamos antes de empezar.</p>
-        </div>
-        <ul class="m-0 flex list-none flex-col border-t-4 border-overol p-0 md:hidden">
-          {SERVICIOS.map((s) => (
-            <li class="flex flex-col gap-2 border-b border-gris-claro py-5">
-              <div class="flex items-baseline justify-between gap-3">
-                <span class="font-display text-[26px] font-bold text-overol">{s.nombre}</span>
-                <span class="font-display text-2xl font-bold whitespace-nowrap"><span class="sr-only">Desde </span>{pesosServer(s.base)}</span>
-              </div>
-              <p class="m-0 leading-snug text-[#2C3547]">{s.desc}</p>
-              <div class="flex items-center justify-between gap-3">
-                <span class="text-gris">{s.tiempo}</span>
-                <a href="#agendar" data-book={s.id} class="btn-linea min-h-11 px-4 py-2" aria-label={`Agendar ${s.nombre.toLowerCase()}`}>Agendar</a>
-              </div>
-            </li>
-          ))}
-        </ul>
-        <div class="relative hidden overflow-x-auto border-t-4 border-overol md:block">
-          <table class="w-full min-w-[760px] border-collapse text-[17px]">
-            <thead>
-              <tr class="text-left text-[15px] text-gris">
-                <th scope="col" class="py-4 pr-4 font-semibold">Servicio</th>
-                <th scope="col" class="p-4 font-semibold">Qué incluye</th>
-                <th scope="col" class="p-4 font-semibold">Tiempo</th>
-                <th scope="col" class="p-4 text-right font-semibold">Desde</th>
-                <th scope="col" class="py-4 pl-4"><span class="sr-only">Agendar</span></th>
-              </tr>
-            </thead>
-            <tbody>
-              {SERVICIOS.map((s) => (
-                <tr class="border-t border-gris-claro">
-                  <th scope="row" class="py-5.5 pr-4 text-left font-display text-[26px] font-bold whitespace-nowrap text-overol">{s.nombre}</th>
-                  <td class="p-4 py-5.5 leading-snug text-[#2C3547]">{s.desc}</td>
-                  <td class="p-4 py-5.5 whitespace-nowrap text-gris">{s.tiempo}</td>
-                  <td class="p-4 py-5.5 text-right font-display text-2xl font-bold whitespace-nowrap">{pesosServer(s.base)}</td>
-                  <td class="py-5.5 pl-4 text-right">
-                    <a href="#agendar" data-book={s.id} class="btn-linea min-h-11 px-4 py-2" aria-label={`Agendar ${s.nombre.toLowerCase()}`}>Agendar</a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
 
     <Agendador />
 
