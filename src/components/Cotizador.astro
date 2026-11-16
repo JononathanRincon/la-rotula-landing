@@ -4,10 +4,11 @@ const servs = SERVICIOS.map((s) => ({ id: s.id, base: s.base, fijo: 'fijo' in s 
 const ini = servs.find((s) => s.id === 'Frenos')!;
 ---
 <section id="cotizar" class="pantalla bg-overol text-white" data-cotizador data-servs={JSON.stringify(servs)}>
-  <div class="wrap flex flex-wrap gap-x-12 gap-y-8 py-sec">
-    <div class="flex min-w-0 flex-[1_1_320px] flex-col gap-4">
+  <div class="wrap flex flex-wrap gap-x-12 gap-y-8 py-sec movil:gap-y-5">
+    <div class="flex min-w-0 flex-[1_1_320px] flex-col gap-4 movil:gap-2">
       <h2 class="h2 m-0">¿Cuánto me cuesta?</h2>
-      <p class="lead m-0 max-w-[26em] text-[#D6DBE6]">Elige tu carro y el servicio. Te damos un rango de referencia; el valor exacto sale del diagnóstico y lo apruebas antes de empezar.</p>
+      <p class="lead m-0 max-w-[26em] text-[#D6DBE6] movil:hidden">Elige tu carro y el servicio. Te damos un rango de referencia; el valor exacto sale del diagnóstico y lo apruebas antes de empezar.</p>
+      <p class="m-0 text-base text-[#D6DBE6] md:hidden">Precio de referencia. El exacto lo apruebas tras el diagnóstico.</p>
       <picture class="mt-4 hidden overflow-hidden rounded-xl bg-overol-osc md:block">
         <source data-q-src srcset={`/img/${ini.img}.webp`} type="image/webp" />
         <img data-q-img src={`/img/${ini.img}.jpg`} alt={ini.alt} width="800" height="993" loading="lazy"
@@ -27,25 +28,29 @@ const ini = servs.find((s) => s.id === 'Frenos')!;
           {ANIOS.map((a) => <button type="button" class="chip-dark" data-value={a} aria-pressed={a === '2017 a 2020' ? 'true' : 'false'}>{a}</button>)}
         </div>
       </fieldset>
-      <fieldset class="m-0 min-w-0 border-0 p-0">
+      <fieldset class="m-0 min-w-0 border-0 p-0 movil:order-first">
         <legend class="mb-[clamp(6px,1.2vh,12px)] p-0 font-semibold">Servicio</legend>
-        <div class="flex flex-wrap gap-2" data-group="serv">
-          {SERVICIOS.map((s) => <button type="button" class="chip-dark" data-value={s.id} aria-pressed={s.id === 'Frenos' ? 'true' : 'false'}>{s.id}</button>)}
+        <div class="flex flex-wrap gap-2 movil:grid movil:grid-cols-2" data-group="serv">
+          {SERVICIOS.map((s) => (
+            <button type="button" class="chip-dark movil:justify-center movil:rounded-lg movil:px-2" data-value={s.id} aria-pressed={s.id === 'Frenos' ? 'true' : 'false'}>
+              {s.id === 'Revisión técnico-mecánica' ? (<><span class="movil:hidden">{s.id}</span><span class="md:hidden">Técnico-mecánica</span></>) : s.id}
+            </button>
+          ))}
         </div>
       </fieldset>
-      <picture class="block overflow-hidden rounded-xl bg-overol-osc md:hidden">
-        <source data-q-src srcset={`/img/${ini.img}.webp`} type="image/webp" />
-        <img data-q-img src={`/img/${ini.img}.jpg`} alt={ini.alt} width="800" height="993" loading="lazy"
-          class="block aspect-[16/10] w-full object-cover transition-opacity duration-300" />
-      </picture>
-      <div aria-live="polite" class="flex flex-wrap items-end justify-between gap-5 border-t-2 border-white/20 pt-[clamp(12px,2.4vh,24px)]">
-        <div class="flex flex-col gap-1.5">
-          <span data-q-label class="text-base text-humo"></span>
-          <span data-q-range class="font-display text-[clamp(36px,min(5vw,7vh),60px)] leading-none font-extrabold text-placa"></span>
-          <span data-q-incl class="max-w-[30em] text-base leading-snug text-white"></span>
-          <span data-q-note class="solo-alto max-w-[30em] text-[15px] leading-snug text-humo"></span>
+      <div aria-live="polite" class="flex flex-wrap items-end justify-between gap-5 border-t-2 border-white/20 pt-[clamp(12px,2.4vh,24px)] movil:gap-4 movil:rounded-xl movil:border-0 movil:bg-overol-osc movil:p-3.5">
+        <div class="flex min-w-0 flex-col gap-1.5 movil:grid movil:w-full movil:grid-cols-[92px_1fr] movil:gap-x-3.5 movil:gap-y-1">
+          <picture class="row-span-4 block overflow-hidden rounded-lg bg-overol md:hidden">
+            <source data-q-src srcset={`/img/${ini.img}.webp`} type="image/webp" />
+            <img data-q-img src={`/img/${ini.img}.jpg`} alt={ini.alt} width="800" height="993" loading="lazy"
+              class="block h-[115px] w-[92px] object-cover transition-opacity duration-300" />
+          </picture>
+          <span data-q-label class="text-base text-humo movil:text-sm"></span>
+          <span data-q-range class="font-display text-[clamp(36px,min(5vw,7vh),60px)] leading-none font-extrabold text-placa movil:text-[28px]"></span>
+          <span data-q-incl class="max-w-[30em] text-base leading-snug text-white movil:text-sm"></span>
+          <span data-q-note class="solo-alto max-w-[30em] text-[15px] leading-snug text-humo movil:hidden"></span>
         </div>
-        <a href="#agendar" data-q-book class="btn-placa btn-big">Agendar este servicio</a>
+        <a href="#agendar" data-q-book class="btn-placa btn-big movil:w-full movil:text-xl">Agendar este servicio</a>
       </div>
     </div>
   </div>
